@@ -1,5 +1,6 @@
 # Introduction to Algorithms and Machine Learning
 # by Justin Skycak
+# https://www.justinmath.com/some-short-introductory-coding-exercises/
 
 def check_if_symmetric(s):
     original_s = s.lower()
