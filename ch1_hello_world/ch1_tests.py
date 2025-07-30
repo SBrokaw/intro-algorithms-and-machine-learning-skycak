@@ -58,6 +58,26 @@ tests = [
     },
     {
         'function': convert_to_numbers,
+        'input': 'NaN',
+        'output': [49, 50, 51, 52, 53]
+    },
+    {
+        'function': convert_to_numbers,
+        'input': 'Infinity',
+        'output': [49, 50, 51, 52, 53]
+    },
+    {
+        'function': convert_to_numbers,
+        'input': '12,345',
+        'output': [49, 50, 51, 52, 53]
+    },
+    {
+        'function': convert_to_numbers,
+        'input': '!@#$%',
+        'output': [49, 50, 51, 52, 53]
+    },
+    {
+        'function': convert_to_numbers,
         'input': '12345',
         'output': [49, 50, 51, 52, 53]
     },
@@ -83,6 +103,7 @@ for test in tests:
         failures += 1
         print(f'!FAIL! {function.__name__}({trial})')
         print(f'!FAIL!   returned {result}, expected {goal}')
+        print(f'!FAIL!   expected {goal}')
 
 print("Chapter 1 Tests".center(50, '-'))
 print(f'Testing complete with {successes} passes and {failures} failures')
