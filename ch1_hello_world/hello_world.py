@@ -2,20 +2,18 @@
 # by Justin Skycak
 # https://www.justinmath.com/some-short-introductory-coding-exercises/
 
-def check_if_symmetric(s):
+def check_if_symmetric2(s):
     original_s = s.lower()
     backward_s = ''
     for i in range(len(s)):
         backward_s += s[len(s)- i - 1]
 
-    print(f'{s} {backward_s}')
     return backward_s == s
 
-def check_if_symmetric2(s):
+def check_if_symmetric(s):
     original_s = s.lower()
     backward_s = original_s[::-1]
 
-    print(f'{original_s} {backward_s}')
     return backward_s == original_s
 
 def convert_to_numbers(s):
@@ -100,32 +98,41 @@ def count_characters(s):
 
 def is_prime(n):
     num = int(n)
-    print(f'is_prime({num})'')
-    for i in range(floor(num/2)):
-        return True if num % i == 0
+    if num < 2: return False
+    limit = int(num/2)
+    print(f'checking {num} to {limit}')
+    for i in range(3, limit):
+        if num % i == 0: 
+            print(f'  Not prime. Divisor {i} found')
+            return False
     
-    return false
+    return True
 
 
 
 
-print('\n' + " Problem 1 - check_if_symmetric(string)".center(50, '-'))
+print('\n' + "---- Problem 1 -" + "check_if_symmetric(string)".center(50, '-'))
 print(check_if_symmetric('firetruck'))
-
-print('\n' + " Problem 2 - convert_to_numbers(string)".center(50, '-'))
 print(check_if_symmetric2('raceCaR'))
 
-print('\n' + " Problem 3 - convert_to_letters(array)".center(50, '-'))
+print('\n' + "---- Problem 2 -" + " convert_to_numbers(string)".center(50, '-'))
 print(convert_to_numbers('for once in your life, Donny, pay attention !! 1230983'))
 
-print('\n' + " Problem 4 - get_intersection(array1, array2)".center(50, '-'))
+print('\n' + "---- Problem 3 -" + " convert_to_letters(array)".center(50, '-'))
 print(convert_to_chars(convert_to_numbers('for once in your life, Donny, pay attention !! 1230983')))
 
-print('\n' + " Problem 5 - get_union(array1, array2)".center(50, '-'))
+print('\n' + "---- Problem 4 -" + " get_intersection(array1, array2)".center(50, '-'))
 print(get_intersection('aabbccddefghijkzxyw', 'zxybbbbbbcccdefghijklmnopzxwynbw'))
 
-print('\n' + " Problem 6  count_characters(string)".center(50, '-'))
+print('\n' + "---- Problem 5 -" + " get_union(array1, array2)".center(50, '-'))
+print(get_union('aabbccddefghijkzxyw', 'zxybbbbbbcccdefghijklmnopzxwynbw'))
+
+print('\n' + "---- Problem 6 -" + " count_characters(string)".center(50, '-'))
 print(count_characters('aabbccddefghijkzxyw'))
 
-print('\n' + " Problem 7  is_prime(n)".center(50, '-'))
+print('\n' + "---- Problem 7 -" + " is_prime(n)".center(50, '-'))
 print(is_prime(109733))
+print(is_prime(1092))
+print(is_prime(3))
+print(is_prime(2))
+print(is_prime(1))
