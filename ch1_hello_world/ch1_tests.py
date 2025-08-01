@@ -122,7 +122,7 @@ successes = 0
 failures = 0
 
 print("=".center(50, '='))
-print("Chapter 1 Tests".center(50, '='))
+print(" Chapter 1 Tests ".center(50, '='))
 print("=".center(50, '='))
 
 for test in tests:
