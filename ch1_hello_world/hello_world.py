@@ -1,6 +1,7 @@
 # Introduction to Algorithms and Machine Learning
 # by Justin Skycak
 # https://www.justinmath.com/some-short-introductory-coding-exercises/
+import pdb
 
 def check_if_symmetric2(s):
     original_s = s.lower()
@@ -111,14 +112,35 @@ def is_prime(n):
     return True
 
 
+# TODO finish this and test it
+def decimal_to_base_b(s, b):
+    count = 0
+    for i in range(len(s)):
+        count += int(s[i]) * b**i
+
+    return str(count)
+
+def base_b_to_decimal(s, b):
+    count = 0
+    for i in range(len(s)):
+        count += int(s[i]) * b**i
+
+    return str(count)
+
+
 def binary_to_decimal(s):
     if not s.isdecimal(): return '0'
 
-    count = 0
+    ones = list(s)
     for i in range(len(s)):
-        if s[i] == '1': count += 2**i
+        if s[i] != '0': ones[i] = 1    # convert all numbers to 1s, leave 0s
 
-    return str(count)
+    return base_b_to_decimal(ones, 2)
+
+def decimal_to_binary(s):
+    if not s.isdecimal(): return '0'
+
+    return decimal_to_base_b(s, 2)
 
 
 

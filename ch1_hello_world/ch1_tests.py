@@ -160,6 +160,11 @@ tests = [
         'function': binary_to_decimal,
         'input': ['1000000111111010001111'],
         'output': '3956609'
+    },
+    {
+        'function': binary_to_decimal,
+        'input': ['4000000151911010001811'],
+        'output': '3956609'
     }
 ]
 
