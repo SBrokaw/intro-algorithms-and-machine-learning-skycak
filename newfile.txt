@@ -1,7 +1,0 @@
-new line???
-new line?\n branch baby branch!
-Line_master1
-branch, baby, branch!
-feature_branch_changes
-
-Merged successfully

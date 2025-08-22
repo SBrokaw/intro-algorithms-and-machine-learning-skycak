@@ -1,4 +1,4 @@
-from hello_world import check_if_symmetric, convert_to_numbers, convert_to_chars, get_intersection
+from hello_world import * #check_if_symmetric, convert_to_numbers, convert_to_chars, get_intersection, get_union, count_characters
 
 tests = [
     {
@@ -115,6 +115,51 @@ tests = [
         'function': get_intersection,
         'input': ['0x1A3F', '0xffFF'],
         'output': ['0', 'x', 'F']
+    },
+    {
+        'function': count_characters,
+        'input': ['aabbccddefghijkzxyw'],
+        'output': {'a': 2, 'b': 2, 'c': 2, 'd': 2, 'e': 1, 'f': 1, 'g': 1, 'h': 1, 'i': 1, 'j': 1, 'k': 1, 'z': 1, 'x': 1, 'y': 1, 'w': 1}
+    },
+    {
+        'function': is_prime,
+        'input': ['1092'],
+        'output':  False
+    },
+    {
+        'function': is_prime,
+        'input': ['3'],
+        'output':  True
+    },
+    {
+        'function': is_prime,
+        'input': ['2'],
+        'output':  True
+    },
+    {
+        'function': is_prime,
+        'input': ['1'],
+        'output':  False
+    },
+    {
+        'function': is_prime,
+        'input': ['huehue'],
+        'output':  False
+    },
+    {
+        'function': binary_to_decimal,
+        'input': ['aabbccddefghijkzxyw'],
+        'output': '0'
+    },
+    {
+        'function': binary_to_decimal,
+        'input': ['0b1000111'],
+        'output': '0'
+    },
+    {
+        'function': binary_to_decimal,
+        'input': ['1000000111111010001111'],
+        'output': '3956609'
     }
 ]
 

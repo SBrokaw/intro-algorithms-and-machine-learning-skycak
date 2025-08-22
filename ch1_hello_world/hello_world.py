@@ -97,9 +97,11 @@ def count_characters(s):
     return char_w_cnt
 
 def is_prime(n):
+    if not n.isdecimal(): return False
+
     num = int(n)
     if num < 2: return False
-    limit = int(num/2)
+    limit = num // 2
     print(f'checking {num} to {limit}')
     for i in range(3, limit):
         if num % i == 0: 
@@ -109,30 +111,16 @@ def is_prime(n):
     return True
 
 
+def binary_to_decimal(s):
+    if not s.isdecimal(): return '0'
+
+    count = 0
+    for i in range(len(s)):
+        if s[i] == '1': count += 2**i
+
+    return str(count)
 
 
-print('\n' + "---- Problem 1 -" + "check_if_symmetric(string)".center(50, '-'))
-print(check_if_symmetric('firetruck'))
-print(check_if_symmetric2('raceCaR'))
 
-print('\n' + "---- Problem 2 -" + " convert_to_numbers(string)".center(50, '-'))
-print(convert_to_numbers('for once in your life, Donny, pay attention !! 1230983'))
 
-print('\n' + "---- Problem 3 -" + " convert_to_letters(array)".center(50, '-'))
-print(convert_to_chars(convert_to_numbers('for once in your life, Donny, pay attention !! 1230983')))
-
-print('\n' + "---- Problem 4 -" + " get_intersection(array1, array2)".center(50, '-'))
-print(get_intersection('aabbccddefghijkzxyw', 'zxybbbbbbcccdefghijklmnopzxwynbw'))
-
-print('\n' + "---- Problem 5 -" + " get_union(array1, array2)".center(50, '-'))
-print(get_union('aabbccddefghijkzxyw', 'zxybbbbbbcccdefghijklmnopzxwynbw'))
-
-print('\n' + "---- Problem 6 -" + " count_characters(string)".center(50, '-'))
-print(count_characters('aabbccddefghijkzxyw'))
-
-print('\n' + "---- Problem 7 -" + " is_prime(n)".center(50, '-'))
-print(is_prime(109733))
-print(is_prime(1092))
-print(is_prime(3))
-print(is_prime(2))
-print(is_prime(1))
+print(binary_to_decimal('100000111000101001'))
