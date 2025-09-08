@@ -71,9 +71,6 @@ def get_intersection(s1, s2):
     # sort set
     sorted_intersection = sorted(list(set_intersection_fancy))
 
-    print(f'sorted              {sorted_intersection}')
-    print(f'set intersection    {set_intersection_fancy}')
-    print(f'order preserved     {first_appr_intersect}')
     return intersection
 
 
@@ -102,11 +99,9 @@ def is_prime(n):
 
     num = int(n)
     if num < 2: return False
-    limit = num // 2
-    print(f'checking {num} to {limit}')
+    limit = num // 2    # // is floor division (returns int)
     for i in range(3, limit):
         if num % i == 0: 
-            print(f'  Not prime. Divisor {i} found')
             return False
     
     return True
@@ -114,16 +109,28 @@ def is_prime(n):
 
 # TODO finish this and test it
 def decimal_to_base_b(s, b):
-    count = 0
-    for i in range(len(s)):
-        count += int(s[i]) * b**i
+    remaining = int(s)
+    count = []
+    exponent = 1
+    # find largest exponent
+    while( b**exponent < remaining ): exponent += 1
 
-    return str(count)
+    # go from largest exponent of b to 1
+    counter = range(exponent)[::-1]
+    breakpoint()
+    for i in counter:
+        count.append(remaining // b**(int(i)))
+        remaining %= b**int(i)
+
+    return count
 
 def base_b_to_decimal(s, b):
     count = 0
-    for i in range(len(s)):
-        count += int(s[i]) * b**i
+    s_little_endian = s[::-1] # flip input s so we iterate through little-endian
+    # TODO add hexadecimal handling for characters A - F, convert to ints 10 - 15
+
+    for i in range(len(s_little_endian)):
+        count += int(s_little_endian[i]) * b**(i)
 
     return str(count)
 
@@ -133,7 +140,7 @@ def binary_to_decimal(s):
 
     ones = list(s)
     for i in range(len(s)):
-        if s[i] != '0': ones[i] = 1    # convert all numbers to 1s, leave 0s
+        if s[i] != '0': ones[i] = '1'    # convert all numbers to 1s, leave 0s
 
     return base_b_to_decimal(ones, 2)
 
@@ -142,7 +149,3 @@ def decimal_to_binary(s):
 
     return decimal_to_base_b(s, 2)
 
-
-
-
-print(binary_to_decimal('100000111000101001'))

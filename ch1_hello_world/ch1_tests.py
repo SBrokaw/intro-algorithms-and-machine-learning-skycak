@@ -158,13 +158,28 @@ tests = [
     },
     {
         'function': binary_to_decimal,
+        'input': ['1100'],
+        'output': '12'
+    },
+    {
+        'function': binary_to_decimal,
+        'input': ['11010'],
+        'output': '26'
+    },
+    {
+        'function': binary_to_decimal,
         'input': ['1000000111111010001111'],
-        'output': '3956609'
+        'output': '2129551'
+    },
+    {
+        'function': decimal_to_binary,
+        'input': ['111010001111'],
+        'output': '1100111011000101101100011000011010111'
     },
     {
         'function': binary_to_decimal,
         'input': ['4000000151911010001811'],
-        'output': '3956609'
+        'output': '2129551'
     }
 ]
 
@@ -188,9 +203,9 @@ for test in tests:
         successes += 1
     else:
         failures += 1
-        print(f'!FAIL! {function.__name__}({trial})')
-        print(f'!FAIL!   returned {result}')
-        print(f'!FAIL!   expected {goal}')
+        print(f'!ch1_test FAIL! {function.__name__}({trial})')
+        print(f'!ch1_test FAIL!   returned {result}')
+        print(f'!ch1_test FAIL!   expected {goal}')
 
 print(f'Testing complete with {successes} passes and {failures} failures')
 
