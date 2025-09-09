@@ -107,7 +107,6 @@ def is_prime(n):
     return True
 
 
-# TODO finish this and test it
 def decimal_to_base_b(s, b):
     remaining = int(s)
     count = []
@@ -117,20 +116,80 @@ def decimal_to_base_b(s, b):
 
     # go from largest exponent of b to 1
     counter = range(exponent)[::-1]
-    breakpoint()
     for i in counter:
-        count.append(remaining // b**(int(i)))
+        val = remaining // b**(int(i))
+        # convert to characters for numbers > 9
+        if int(val) > 9:
+            if val == 10: val = 'A'
+            elif val == 11: val = 'B'
+            elif val == 12: val = 'C'
+            elif val == 13: val = 'D'
+            elif val == 14: val = 'E'
+            elif val == 15: val = 'F'
+            elif val == 16: val = 'G'
+            elif val == 17: val = 'H'
+            elif val == 18: val = 'I'
+            elif val == 19: val = 'J'
+            elif val == 20: val = 'K'
+            elif val == 21: val = 'L'
+            elif val == 22: val = 'M'
+            elif val == 23: val = 'N'
+            elif val == 24: val = 'O'
+            elif val == 25: val = 'P'
+            elif val == 26: val = 'Q'
+            elif val == 27: val = 'R'
+            elif val == 28: val = 'S'
+            elif val == 29: val = 'T'
+            elif val == 30: val = 'U'
+            elif val == 31: val = 'V'
+            elif val == 32: val = 'W'
+            elif val == 33: val = 'X'
+            elif val == 34: val = 'Y'
+            elif val == 35: val = 'Z'
+
+        count.append(str(val))
         remaining %= b**int(i)
 
-    return count
+    return ''.join(count)
 
 def base_b_to_decimal(s, b):
     count = 0
+    num = 0
     s_little_endian = s[::-1] # flip input s so we iterate through little-endian
-    # TODO add hexadecimal handling for characters A - F, convert to ints 10 - 15
 
+    # handles bases 11 to 34 (mostly only hex will be used but I wanted to support base-12 as well)
     for i in range(len(s_little_endian)):
-        count += int(s_little_endian[i]) * b**(i)
+        if( b > 10 ):
+            if s_little_endian[i].isdecimal(): num = int(s_little_endian[i])
+            elif s_little_endian[i].lower() == 'a': num = 10 if 10 < b else 0
+            elif s_little_endian[i].lower() == 'b': num = 11 if 11 < b else 0
+            elif s_little_endian[i].lower() == 'c': num = 12 if 12 < b else 0
+            elif s_little_endian[i].lower() == 'd': num = 13 if 13 < b else 0
+            elif s_little_endian[i].lower() == 'e': num = 14 if 14 < b else 0
+            elif s_little_endian[i].lower() == 'f': num = 15 if 15 < b else 0
+            elif s_little_endian[i].lower() == 'g': num = 16 if 16 < b else 0
+            elif s_little_endian[i].lower() == 'h': num = 17 if 17 < b else 0
+            elif s_little_endian[i].lower() == 'i': num = 18 if 18 < b else 0
+            elif s_little_endian[i].lower() == 'j': num = 19 if 19 < b else 0
+            elif s_little_endian[i].lower() == 'k': num = 20 if 20 < b else 0
+            elif s_little_endian[i].lower() == 'l': num = 21 if 21 < b else 0
+            elif s_little_endian[i].lower() == 'm': num = 22 if 22 < b else 0
+            elif s_little_endian[i].lower() == 'n': num = 23 if 23 < b else 0
+            elif s_little_endian[i].lower() == 'o': num = 24 if 24 < b else 0
+            elif s_little_endian[i].lower() == 'p': num = 25 if 25 < b else 0
+            elif s_little_endian[i].lower() == 'q': num = 26 if 26 < b else 0
+            elif s_little_endian[i].lower() == 'r': num = 27 if 27 < b else 0
+            elif s_little_endian[i].lower() == 's': num = 28 if 28 < b else 0
+            elif s_little_endian[i].lower() == 't': num = 29 if 29 < b else 0
+            elif s_little_endian[i].lower() == 'u': num = 30 if 30 < b else 0
+            elif s_little_endian[i].lower() == 'v': num = 31 if 31 < b else 0
+            elif s_little_endian[i].lower() == 'w': num = 32 if 32 < b else 0
+            elif s_little_endian[i].lower() == 'x': num = 33 if 33 < b else 0
+            elif s_little_endian[i].lower() == 'y': num = 34 if 34 < b else 0
+            elif s_little_endian[i].lower() == 'z': num = 35 if 35 < b else 0
+            else: num = 0
+        else: num = int(s_little_endian[i]) if int(s_little_endian[i]) < b else b-1
+        count += num * b**(i)
 
     return str(count)
 
@@ -144,8 +203,33 @@ def binary_to_decimal(s):
 
     return base_b_to_decimal(ones, 2)
 
+def hexadecimal_to_decimal(s):
+    return base_b_to_decimal(s, 16)
+
 def decimal_to_binary(s):
     if not s.isdecimal(): return '0'
 
     return decimal_to_base_b(s, 2)
 
+
+def decimal_to_hexadecimal(s):
+    if not s.isdecimal(): return '0'
+
+    return decimal_to_base_b(s, 16)
+
+def binary_to_hexadecimal(s):
+    decimal = 0
+    if not s.isdecimal(): return '0'
+
+    ones = list(s)
+    for i in range(len(s)):
+        if s[i] != '0': ones[i] = '1'    # convert all numbers to 1s, leave 0s
+
+    decimal = base_b_to_decimal(ones, 2)
+
+    return decimal_to_hexadecimal(decimal)
+
+def hexadecimal_to_binary(s):
+    decimal = hexadecimal_to_decimal(s)
+
+    return decimal_to_binary(decimal)

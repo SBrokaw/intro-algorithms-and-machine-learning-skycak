@@ -172,14 +172,69 @@ tests = [
         'output': '2129551'
     },
     {
+        'function': binary_to_decimal,
+        'input': ['4000000151911010001811'],
+        'output': '2129551'
+    },
+    {
         'function': decimal_to_binary,
         'input': ['111010001111'],
         'output': '1100111011000101101100011000011010111'
     },
     {
-        'function': binary_to_decimal,
-        'input': ['4000000151911010001811'],
-        'output': '2129551'
+        'function': decimal_to_binary,
+        'input': ['111010001110'],
+        'output': '1100111011000101101100011000011010110'
+    },
+    {
+        'function': hexadecimal_to_decimal,
+        'input': ['10111'],
+        'output': '65809'
+    },
+    {
+        'function': hexadecimal_to_decimal,
+        'input': ['fedcbann'],
+        'output': '4275878400'
+    },
+    {
+        'function': hexadecimal_to_decimal,
+        'input': ['t'],
+        'output': '0'
+    },
+    {
+        'function': decimal_to_hexadecimal,
+        'input': ['t'],
+        'output': '0'
+    },
+    {
+        'function': decimal_to_hexadecimal,
+        'input': ['100'],
+        'output': '64'
+    },
+    {
+        'function': decimal_to_hexadecimal,
+        'input': ['15'],
+        'output': 'F'
+    },
+    {
+        'function': binary_to_hexadecimal,
+        'input': ['15'],
+        'output': '3'
+    },
+    {
+        'function': binary_to_hexadecimal,
+        'input': ['110110100001111'],
+        'output': '6D0F'
+    },
+    {
+        'function': hexadecimal_to_binary,
+        'input': ['6D0F'],
+        'output': '110110100001111'
+    },
+    {
+        'function': hexadecimal_to_binary,
+        'input': ['tt'],
+        'output': '0'
     }
 ]
 
