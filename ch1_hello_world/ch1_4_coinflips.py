@@ -9,7 +9,9 @@ def sim_probability(heads, flips):
     flips = int(flips)
     if flips < 1: return 0
 
+    successes = 0
+
     for i in range(flips):
-        if random() < 0.5: successes += 1
+        if random.random() < 0.5: successes += 1
     
     return successes == heads
