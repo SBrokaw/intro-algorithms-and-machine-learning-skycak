@@ -42,6 +42,11 @@ def squares_of_even_numbers( nums ):
 # Expected output:
 # [(1,1,1), (1,2,2), (1,3,3), (2,1,2), (2,2,4), ... , (3,3,9)]
 # Hint: nested for clauses.
+def multiplication_table( i, j ):
+    points = [(m+1, n+1, (m+1)*(n+1)) for m in range(i) for n in range(j)]
+    print(f'[DEBUG 47] {points}')
+
+    return 0
 
 
 # Exercise 4 — Cartesian product with condition
@@ -70,3 +75,4 @@ cartesian_product([[1, 2]
 
 flatten_list([[1, 2], [3, 4], [5, 6]])
 squares_of_even_numbers([-8, -7, 1, 2, 3, 4, 5, 6, 7, 8])
+multiplication_table(3, 3)
