@@ -1,19 +1,33 @@
 # Skycak, J. (2021). Cartesian Product. In Introduction to Algorithms and Machine Learning: 
 # from Sorting to Strategic Agents. https://justinmath.com/cartesian-product/
+import pdb
 
 def cartesian_product( ranges ):
-    points = [None] * len(ranges)
+    points = [[]]
 
     count = 1
+    extended = []
+
     for i in range(len(ranges)):
-        count *= len(ranges[i])
-    result = [None] * count
+        for item in points:
+            extended.append(item)
+        print(f'[DEBUG 14] {extended}')
+
+        for u in range(len(extended)):
+            extended[u].append(ranges[i][u])
+        print(f'[DEBUG 19] {extended}')
+        
+        for item in extended:
+            points.append(item)
+        print(f'[DEBUG 23] {points}')
+
 
     print(f'{len(points)} {points}')
-    print(f'{len(result)} {result}')
 
 
 cartesian_product([[1, 2],
-                   [0, 0, 0, 0],
-                   ['a', 'b', 'c']
+                   ['09', '08']
+                  ])
+
+cartesian_product([[1, 2]
                   ])
