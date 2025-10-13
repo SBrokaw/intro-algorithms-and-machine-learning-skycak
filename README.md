@@ -3,6 +3,8 @@ https://www.justinmath.com/books/#introduction-to-algorithms-and-machine-learnin
 
 https://docs.python.org/3/library/stdtypes.html#
 
+## Chapter 1 -- Hello World
+
 Skycak, J. (2021). Some Short Introductory Coding Exercises. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/some-short-introductory-coding-exercises/
 
 Skycak, J. (2021). Converting Between Binary, Decimal, and Hexadecimal. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/converting-between-binary-decimal-and-hexadecimal/
@@ -14,3 +16,7 @@ Skycak, J. (2021). Simulating Coin Flips. In Introduction to Algorithms and Mach
 Skycak, J. (2021). Roulette Wheel Selection. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/roulette-wheel-selection/
 
 Skycak, J. (2021). Cartesian Product. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/cartesian-product/
+
+## Chapter 2 -- Searching and Sorting
+
+Skycak, J. (2021). Brute Force Search with Linear-Encoding Cryptography. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/brute-force-search-with-linear-encoding-cryptography/
