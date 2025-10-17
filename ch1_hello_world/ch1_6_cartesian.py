@@ -7,9 +7,9 @@ def cartesian_product( ranges ):
 
     for r in ranges:
         points = [p + [v] for p in points for v in r]
-        print(f'[DEBUG 10] {points}')
+        #print(f'[DEBUG 10] {points}')
 
-    print(f'{len(points)} {points}')
+    print(f'[DEBUG 12] {len(points)} {points}')
     return points
 
 
@@ -29,7 +29,7 @@ def flatten_list( ranges ):
 # Input: nums = [1, 2, 3, 4, 5, 6]
 # Goal: make a list of squares of even numbers only: [4, 16, 36].
 # Hint: include an if clause in the comprehension.
-def squares_of_even_numbers( nums ):
+def squares_of_even_numbers( nums ): 
     points = []
     points = [[v**2] for v in nums if v % 2 == 0]
     print(f'[DEBUG 35] {points}')
@@ -56,6 +56,15 @@ def multiplication_table( i, j ):
 # Goal: all (a, b) pairs where a + b is even.
 # Expected: [(1,5), (2,4), (3,5)]
 # Hint: add an if at the end of the comprehension.
+def cartesian_product_only_evens( ranges ):
+    points = [[]]
+    for r in ranges:
+        points = [p + [v] for p in points for v in r]
+
+    points = [p for p in points if sum(p) % 2 == 0]
+
+    print(f'[DEBUG 62] {points}')
+    return 0
 
 
 
@@ -63,16 +72,24 @@ def multiplication_table( i, j ):
 # Input:
 # nums = [1, 2, 3]
 # Goal: produce [[1, 1], [2, 4], [3, 9]] — each element paired with its square.
+def squares( nums ):
+    points = [[]]
+    points = [[v] + [v**2] for v in nums]
+
+    print(f'[DEBUG 79] {points}')
+    return 0
 
 
 
 cartesian_product([[1, 2],
                    ['09', '08']
                   ])
-
 cartesian_product([[1, 2]
                   ])
-
+cartesian_product( [[1, 2, 3, 4], [10, 9, 8, 7, 6], [5, 6, 7]] )
 flatten_list([[1, 2], [3, 4], [5, 6]])
 squares_of_even_numbers([-8, -7, 1, 2, 3, 4, 5, 6, 7, 8])
 multiplication_table(3, 3)
+cartesian_product_only_evens( [[1, 2, 3], [4, 5]] )
+cartesian_product_only_evens( [[1, 2, 3, 4], [10, 9, 8, 7, 6], [5, 6, 7]] )
+squares([1, 2, 3])
