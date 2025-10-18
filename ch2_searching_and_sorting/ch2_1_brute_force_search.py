@@ -22,25 +22,23 @@ def decode_msg( msg, a, b ):
     if any( x < 0 or x > 26 or x % 1 != 0 for x in legible_check):
         return False
     else:
-        chr_msg = [chr(96 + m) for m in decoded_msg]
-        return chr_msg
+        chr_msg = [chr(96 + m) if m > 0 else ' ' for m in decoded_msg]
+        
+        return ''.join(chr_msg)
 
     return False
 
 
 def enigma_decode( secret ):
     possibilities = [[]]
-    possibilities = [p + [decoded] 
+    possibilities = [(i, j, decoded) 
                      for p in possibilities
                      for i in range(101)
                      for j in range(101)
                      if( decoded := decode_msg( secret, i, j ) )]
-    legible = []
-    for p in possibilities:
-        for c in p:
-            legible.append(''.join(c))
 
-    print(f'[Enigma Possibilities]')
+    print(f'[Enigma Possibilities] (a, b, \'msg\')')
+    for s in possibilities: print(f'  {s}')
 
 encode_msg("a cat", 2, 3)
 decode_msg(encode_msg("a cat", 2, 3), 2, 3)
