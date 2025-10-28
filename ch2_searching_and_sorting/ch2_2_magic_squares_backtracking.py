@@ -4,6 +4,18 @@
 import random
 import pdb
 
+def deepcopy( target ):
+    if isinstance(target, list): return [deepcopy(i) for i in target]
+    else: return target
+
+
+def blankarray():
+    blank = [[None,None,None],
+             [None,None,None],
+             [None,None,None]]
+    return deepcopy( blank )
+
+
 def valid_square( trial ):
     #check rows
     if sum(trial[0]) != 15:
@@ -29,6 +41,7 @@ def valid_square( trial ):
 
     return True
 
+
 def magic_squares():
     digits = range(1, 10)
     blank = [[None,None,None],
@@ -40,32 +53,32 @@ def magic_squares():
     successes = []
 
     for n1 in digits:
-        trial = blank.deepcopy()
+        trial = blankarray()
         trial[0][0] = n1
         for n2 in digits:
-            trial = blank.deepcopy()
+            trial = blankarray()
             trial[0][0] = n1
             trial[0][1] = n2
             for n3 in digits:
-                trial = blank.copy()
+                trial = blankarray()
                 trial[0][0] = n1
                 trial[0][1] = n2
                 trial[0][2] = n3
                 for n4 in digits:
-                    trial = blank.copy()
+                    trial = blankarray()
                     trial[0][0] = n1
                     trial[0][1] = n2
                     trial[0][2] = n3
                     trial[1][0] = n4
                     for n5 in digits:
-                        trial = blank.copy()
+                        trial = blankarray()
                         trial[0][0] = n1
                         trial[0][1] = n2
                         trial[0][2] = n3
                         trial[1][0] = n4
                         trial[1][1] = n5
                         for n6 in digits:
-                            trial = blank.copy()
+                            trial = blankarray()
                             trial[0][0] = n1
                             trial[0][1] = n2
                             trial[0][2] = n3
@@ -73,7 +86,7 @@ def magic_squares():
                             trial[1][1] = n5
                             trial[1][2] = n6
                             for n7 in digits:
-                                trial = blank.copy()
+                                trial = blankarray()
                                 trial[0][0] = n1
                                 trial[0][1] = n2
                                 trial[0][2] = n3
@@ -82,7 +95,7 @@ def magic_squares():
                                 trial[1][2] = n6
                                 trial[2][0] = n7
                                 for n8 in digits:
-                                    trial = blank.copy()
+                                    trial = blankarray()
                                     trial[0][0] = n1
                                     trial[0][1] = n2
                                     trial[0][2] = n3
@@ -92,7 +105,7 @@ def magic_squares():
                                     trial[2][0] = n7
                                     trial[2][1] = n8
                                     for n9 in digits:
-                                        trial = blank.copy()
+                                        trial = blankarray()
                                         trial[0][0] = n1
                                         trial[0][1] = n2
                                         trial[0][2] = n3
@@ -104,7 +117,7 @@ def magic_squares():
                                         trial[2][2] = n9
 
                                         if valid_square(trial): 
-                                            successes += [trial.deepcopy()]
+                                            successes += [deepcopy(trial)]
                                         #if len(successes) : print(f'{successes[-1]}')
     
     breakpoint()
