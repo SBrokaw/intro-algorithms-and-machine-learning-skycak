@@ -1,9 +1,33 @@
 # Skycak, J. (2021). Solving Magic Squares via Backtracking. 
 # In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. 
 # https://justinmath.com/solving-magic-squares-via-backtracking/
+import random
+import pdb
 
 def valid_square( trial ):
-    if sum(trial[0]) != 15 or 
+    #check rows
+    if sum(trial[0]) != 15:
+        return False
+    elif sum(trial[1]) != 15:
+        return False
+    elif sum(trial[2]) != 15:
+        return False
+
+    #check columns
+    if trial[0][0] + trial[1][0] + trial[2][0] != 15:
+        return False
+    elif trial[0][1] + trial[1][1] + trial[2][1] != 15:
+        return False
+    elif trial[0][2] + trial[1][2] + trial[2][2] != 15:
+        return False
+
+    #check diagonals
+    if trial[0][0] + trial[1][1] + trial[2][2] != 15:
+        return False
+    elif trial[0][2] + trial[1][1] + trial[2][0] != 15:
+        return False
+
+    return True
 
 def magic_squares():
     digits = range(1, 10)
@@ -16,10 +40,10 @@ def magic_squares():
     successes = []
 
     for n1 in digits:
-        trial = blank.copy()
+        trial = blank.deepcopy()
         trial[0][0] = n1
         for n2 in digits:
-            trial = blank.copy()
+            trial = blank.deepcopy()
             trial[0][0] = n1
             trial[0][1] = n2
             for n3 in digits:
@@ -79,4 +103,11 @@ def magic_squares():
                                         trial[2][1] = n8
                                         trial[2][2] = n9
 
-                                        if valid_square(trial): successes += [trial.copy()]
+                                        if valid_square(trial): 
+                                            successes += [trial.deepcopy()]
+                                        #if len(successes) : print(f'{successes[-1]}')
+    
+    breakpoint()
+    print(f'{len(successes)} Successes -- Example: {successes[int(len(successes) * random.random())]}')
+
+magic_squares()
