@@ -23,3 +23,5 @@ Skycak, J. (2021). Brute Force Search with Linear-Encoding Cryptography. In Intr
 
 Skycak, J. (2021). Solving Magic Squares via Backtracking. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/solving-magic-squares-via-backtracking/
 
+
+Skycak, J. (2021). Estimating Roots via Bisection Search and Newton-Raphson Method. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/estimating-roots-via-bisection-search-and-newton-raphson-method/
