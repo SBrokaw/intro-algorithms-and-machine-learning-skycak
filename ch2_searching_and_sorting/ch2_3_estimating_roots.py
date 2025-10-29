@@ -10,14 +10,17 @@ def calc_root_bisection(x, y, precision):
     c = float((b - a) / 2) # midpoint
     err = float(abs(precision)) # error tolerance
 
+    print('x    y    a     b     c     b-c    trial')
+    print('¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯')
     while( b - c > err ):
         trial = c ** y - x
-        if trial > 0 + err: b = c
-        elif trial < 0 - err: a = c
+        print(f'{x:<4} {y:<4} {a:<5.3g} {b:<5.3g} {c:<5.3g} {b-c:<5.3g} {trial:<4.3g}')
+        if trial > (0 + err): b = c
+        elif trial < (0 - err): a = c
 
         c = (b - a) / 2 # update midpoint
 
-    print(f'[{a}, {c}, {b}], {y}√{x} = {trial}')
+    print(f'[{a:.5g}, {c:.5g}, {b:.5g}], {y}√{x} = {trial:.5g}')
     return trial
 
 calc_root_bisection( 2, 3, 0.05 )
