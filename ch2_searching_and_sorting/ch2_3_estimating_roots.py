@@ -49,21 +49,27 @@ def calc_root_nr(x, y, precision):
     guess = float(x)
     err = float(abs(precision)) # error tolerance
 
-    print('x    y    guess m     x0    y0     trial_b')
+    print('x y guess m     x0    y0    trial_b')
     print('¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯')
     x0 = guess
     y0 = inverse_point( x, y, guess )
     m = slope_tangent_inverse( x, y, guess )
     trial_a = 0.0
     trial_b = root_tangent( m, x0, y0 )
-    for i in range(3): #TODO: implement precision logic here -- while( trial_b.decimals < precision.decimals )
-        print(f'{x:<4} {y:<4} {guess:<5.3g} {m:<5.3g} {x0:<5.3g} {y0:<5.3g} {trial_b:<4.3g}')
-        return trial_b
+    while( abs(trial_a - trial_b) > abs(precision) ):
+        print(f'{x:<1} {y:<1} {guess:<5.3g} {m:<8.2e} {x0:<8.2e} {y0:<8.2e} {trial_b:<8.2e}')
+        trial_a = trial_b
+        x0 = trial_b
+        y0 = inverse_point( x, y, trial_b )
+        m = slope_tangent_inverse( x, y, trial_b )
+        trial_b = root_tangent( m, x0, y0 )
 
+    print(f'Newton-Raphson : {y}√{x} = {trial_b:.7g}')
+    return trial_b
 
 
 calc_root_bisection( 2, 3, 0.05 )
 calc_root_bisection( 2, 3, 0.005 )
 calc_root_bisection( 2, 3, 0.0005 )
 calc_root_bisection( 2, 3, 0.0000001 )
-calc_root_nr( 2, 3, 0.001 )
+calc_root_nr( 2, 3, 0.0000000001 )
