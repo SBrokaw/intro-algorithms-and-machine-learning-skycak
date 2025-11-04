@@ -20,9 +20,13 @@ def slope_tangent_exercise3( p ):
     return 0
 
 def exercise0( alpha, trials ):
+    output_mask = {1, 2, 3, 25, 50, 100, 200, 300, 400}
     initial_guess = 1.0
     print('n   x_n       f\'(x_n)  α∙f\'(x_n)')
     print('‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾')
     for n in range(trials):
+        if n+1 in output_mask: print(f'{n+1:<4g}')
 
+    return 0
 
+exercise0( 0.01, 400 )
