@@ -2,7 +2,32 @@
 # In Introduction to Algorithms and Machine Learning: 
 # from Sorting to Strategic Agents. 
 # https://justinmath.com/single-variable-gradient-descent/
-import math
+#import math
+const_PI = 3.141592654
+const_e = 2.718281828
+
+def factorial( n ):
+    sum = 1
+    for i in range(n):
+        sum *= (n - i)
+
+    return sum
+
+# Maclaurin expansion 
+def sin( p ):
+    sum = 0
+    for n in range(20):
+        sum += (-1) ** n * p ** (2 * n + 1) / factorial(2 * n + 1)
+
+    return sum
+
+# Maclaurin expansion 
+def cos( p ):
+    sum = 0
+    for n in range(20):
+        sum += (-1) ** n * p ** (2 * n) / factorial(2 * n)
+
+    return sum
 
 def next_guess( p, m, alpha ):
     return p - alpha * m 
@@ -17,10 +42,10 @@ def point_exercise2( p ):
     return p ** 3 - p ** 4 - p ** 2
 
 def point_exercise3( p ):
-    return math.sin(p) / (1 + p ** 2)
+    return sin(p) / (1 + p ** 2)
 
 def point_exercise4( p ):
-    return 3 * math.cos(p) + p ** 2 * math.exp(math.sin(p))
+    return 3 * cos(p) + p ** 2 * const_e ** sin(p)
 
 def slope_tangent_exercise0( p ):
     return 2 * p
@@ -32,13 +57,13 @@ def slope_tangent_exercise2( p ):
     return 3 * p ** 2 - 4 * p ** 3 - 2 * p
 
 def slope_tangent_exercise3( p ):
-    return ((1 + p**2) * math.cos(p) - 2 * p * math.sin(p)) / (1 + p**2)**2
+    return ((1 + p**2) * cos(p) - 2 * p * sin(p)) / ((1 + p**2)**2)
 
 def slope_tangent_exercise4( p ):
-    return -3 * math.sin(p) + 2*p*math.exp(math.sin(p)) + p**2 * math.cos(p)*math.exp(math.sin(p))
+    return -3 * sin(p) + 2*p*const_e ** (sin(p)) + p**2 * cos(p)* const_e ** (sin(p))
 
 def exercise0( alpha, trials ):
-    print(' Exercise0 : f(x) = x^2 '.center(50, '='))
+    print(' Exercise0 : f(x) = x^2 '.center(45, '='))
     output_mask = {0, 1, 2, 3, 25, 50, 100, 200, 300, 400}
     x_n = -1.0
     print('n    x_n       f\'(x_n)   α∙f\'(x_n) y_n')
@@ -54,7 +79,7 @@ def exercise0( alpha, trials ):
 
 def exercise1( alpha, trials ):
     print('')
-    print(' Exercise1 : f(x) = x^2 + x + 1 '.center(50, '='))
+    print(' Exercise1 : f(x) = x^2 + x + 1 '.center(45, '='))
     output_mask = {0, 1, 2, 3, 25, 50, 100, 200, 300, 400}
 
     lowest_x = 1.0
@@ -82,7 +107,7 @@ def exercise1( alpha, trials ):
 
 def exercise2( alpha, trials ):
     print('')
-    print(' Exercise2 : f(x) = x^3 - x^4 - x^2 '.center(50, '='))
+    print(' Exercise2 : f(x) = x^3 - x^4 - x^2 '.center(45, '='))
     output_mask = {0, 1, 2, 3, 25, 50, 100, 200, 300, 400}
 
     lowest_x = 1.0
@@ -110,7 +135,7 @@ def exercise2( alpha, trials ):
 
 def exercise3( alpha, trials ):
     print('')
-    print(' Exercise3 : f(x) = sin(x) / (1 + x^2) '.center(80, '='))
+    print(' Exercise3 : f(x) = sin(x) / (1 + x^2) '.center(45, '='))
     output_mask = {0, 1, 2, 3, 25, 50, 100, 200, 300, 400}
 
     lowest_x = 1.0
@@ -138,7 +163,7 @@ def exercise3( alpha, trials ):
 
 def exercise4( alpha, trials ):
     print('')
-    print(' Exercise4 : f(x) = 3·cos(x) + x^2·e^sin(x) '.center(80, '='))
+    print(' Exercise4 : f(x) = 3·cos(x) + x^2·e^sin(x) '.center(45, '='))
     output_mask = {0, 1, 2, 3, 25, 50, 100, 200, 300, 400}
 
     lowest_x = 1.0
