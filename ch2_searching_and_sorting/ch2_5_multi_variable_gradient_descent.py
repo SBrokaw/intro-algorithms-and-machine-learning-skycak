@@ -29,7 +29,8 @@ def cos( p ):
     return sum
 
 def next_guess( v, gradient, alpha ):
-    return [v[0] - alpha * gradient[0], v[1] - alpha * gradient[1]]
+    w = [v[i] - alpha * gradient[i] for i in range(len(v))]
+    return w
 
 def point_exercise0( v ):
     return v[0] * sin(v[1]) + v[0] ** 2
@@ -49,6 +50,18 @@ def point_exercise2( v ):
 def gradient_exercise2( v ):
     return [-1 * v[1] * sin(v[0]), 2 * v[1] + cos(v[0])]
 
+def point_exercise3( v ):
+    return (v[0] - 1) ** 2 + 3 * (v[1] - 2) ** 2 + 4 * (v[2] + 1) ** 2
+
+def gradient_exercise3( v ):
+    return [2 * (v[0] - 1), 6 * (v[1] - 2), 8 * (v[2] + 1)]
+
+def point_exercise4( v ):
+    return 
+
+def gradient_exercise4( v ):
+    return 
+
 def exercise0( alpha, trials ):
     print(' Exercise0 : f(x,y) = x∙sin(y) + x² '.center(60, '='))
     output_mask = {0, 1, 2, 3, 25, 50, 100, 250, 500, 1000, 2000, 3000}
@@ -65,6 +78,7 @@ def exercise0( alpha, trials ):
     return p
 
 def exercise1( alpha, trials ):
+    print('')
     print(' Exercise1 : f(x,y) = (x-1)² + 3y² '.center(60, '='))
     output_mask = {0, 1, 2, 3, 25, 50, 100, 250, 500, 1000, 2000, 3000}
 
@@ -92,6 +106,7 @@ def exercise1( alpha, trials ):
     return w
 
 def exercise2( alpha, trials ):
+    print('')
     print(' Exercise2 : f(x,y) = y² + x∙cos(x) '.center(60, '='))
     output_mask = {0, 1, 2, 3, 25, 50, 100, 250, 500, 1000, 2000, 3000}
 
@@ -104,7 +119,7 @@ def exercise2( alpha, trials ):
             if w < lowest_w:
                 lowest_v = v
                 lowest_w = w
-                print(f'[{v[0]:< 3.2f}, {v[1]:< 3.2f}] {w:<.3f}')
+                #print(f'[{v[0]:< 3.2f}, {v[1]:< 3.2f}] {w:<.3f}')
 
     v = lowest_v
     print('n     x_n                   ∇f\'(x_n)             f(x_n)')
@@ -118,7 +133,40 @@ def exercise2( alpha, trials ):
 
     return w
 
+def exercise3( alpha, trials ):
+    print('')
+    print(' Exercise3 : f(x,y,z) = (x-1)² + 3(y-2)² + 4(z+1)² '.center(60, '='))
+    output_mask = {0, 1, 2, 3, 25, 50, 100, 250, 500, 1000, 2000, 3000}
+
+    lowest_v = [1, 2, 0]
+    lowest_w = point_exercise3(lowest_v)
+    for i in range(-50, 50):
+        for j in range(-50, 50):
+            for k in range(-50, 50):
+                v = [i / 10, j / 10, k / 10]
+                w = point_exercise3(v)
+                if w < lowest_w:
+                    lowest_v = v
+                    lowest_w = w
+                    #print(f'[{v[0]:< 3.2f}, {v[1]:< 3.2f}] {w:<.3f}')
+
+    v = lowest_v
+    print('n     x_n                   ∇f\'(x_n)             f(x_n)')
+    print('‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾')
+    for n in range(trials):
+        m = gradient_exercise3( v )
+        w = point_exercise3( v )
+        if n in output_mask: print(f'{n:<4g} <{v[0]:<4.3f}, {v[1]:<4.3f}, {v[2]:<4.3f}> '
+                                   f'<{m[0]:<4.3f}, {m[1]:<4.3f}, {m[2]:<4.3f}> '
+                                   f'{w:<6.6f}')
+
+        v = next_guess( v, m, alpha )
+
+    return w
+
+
 
 exercise0( 0.01, 3001)
 exercise1( 0.01, 3001)
 exercise2( 0.01, 3001)
+exercise3( 0.01, 3001)
