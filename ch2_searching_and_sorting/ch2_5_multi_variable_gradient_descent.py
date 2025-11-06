@@ -1,6 +1,7 @@
 # Skycak, J. (2021). Multivariable Gradient Descent. In Introduction to 
 # Algorithms and Machine Learning: from Sorting to Strategic Agents. 
 # https://justinmath.com/multivariable-gradient-descent/
+import math
 
 const_PI = 3.141592654
 const_e = 2.718281828
@@ -57,10 +58,12 @@ def gradient_exercise3( v ):
     return [2 * (v[0] - 1), 6 * (v[1] - 2), 8 * (v[2] + 1)]
 
 def point_exercise4( v ):
-    return 
+    x = v[0]; y = v[1]; z = v[2]
+    return x ** 2 + 3 * y ** 2 + 4 * z ** 2 + math.cos(x*y*z)
 
 def gradient_exercise4( v ):
-    return 
+    x = v[0]; y = v[1]; z = v[2]
+    return [2 * x - y * z * math.cos(x*y*z), 6 * y + x * z * math.cos(x*y*z), 8 * z + x * y * math.cos(x*y*z)]
 
 def exercise0( alpha, trials ):
     print(' Exercise0 : f(x,y) = x∙sin(y) + x² '.center(60, '='))
@@ -164,9 +167,42 @@ def exercise3( alpha, trials ):
 
     return w
 
+def exercise4( alpha, trials ):
+    print('')
+    print(' Exercise4 : f(x,y,z) = x² + 3y² + 4z² + cos(xyz) '.center(60, '='))
+    output_mask = {0, 1, 2, 3, 25, 50, 100, 250, 500, 1000, 2000, 3000}
+
+    lowest_v = [1, 2, 0]
+    lowest_w = point_exercise4(lowest_v)
+    for i in range(-50, 50):
+        for j in range(-50, 50):
+            for k in range(-50, 50):
+                v = [i / 10, j / 10, k / 10]
+                w = point_exercise4(v)
+                if w < lowest_w:
+                    lowest_v = v
+                    lowest_w = w
+                    #print(f'[{v[0]:< 3.2f}, {v[1]:< 3.2f}, {v[2]:< 3.2f}] {w:<.3f}')
+
+    v = lowest_v
+    print('n     x_n                   ∇f\'(x_n)             f(x_n)')
+    print('‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾')
+    for n in range(trials):
+        m = gradient_exercise4( v )
+        w = point_exercise4( v )
+        if n in output_mask: print(f'{n:<4g} <{v[0]:<4.3f}, {v[1]:<4.3f}, {v[2]:<4.3f}> '
+                                   f'<{m[0]:<4.3f}, {m[1]:<4.3f}, {m[2]:<4.3f}> '
+                                   f'{w:<6.6f}')
+
+        v = next_guess( v, m, alpha )
+
+    return w
+
+
 
 
 exercise0( 0.01, 3001)
 exercise1( 0.01, 3001)
 exercise2( 0.01, 3001)
 exercise3( 0.01, 3001)
+exercise4( 0.01, 3001)
