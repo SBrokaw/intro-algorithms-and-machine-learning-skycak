@@ -44,6 +44,19 @@ def bubble_sort( arr ):
     print(f'  ..sorted {str(unsorted)}')
     return unsorted
 
+def selection_sort( arr ):
+    print(f'{str(arr)}')
+    unsorted = list(arr.copy())
+
+    swap = bool(unsorted) # false if unsorted is empty
+    while swap:
+        swap = False
+        print(f'  {str(unsorted)}')
+        for i in range(len(unsorted) - 1):
+            if unsorted[i] > unsorted[i+1]:
+                unsorted[i:i+2] = [unsorted[i+1], unsorted[i]]
+
+    return 0
 
 test_arrays = [[],
                [-1, -2, 0, 1000, 0, -2, 200],
