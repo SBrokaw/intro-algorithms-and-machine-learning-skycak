@@ -13,6 +13,17 @@ def min_arr( arr ):
 
     return [idx_min, num_min]
 
+def max_arr( arr ):
+    if len(arr) < 1: return [None, None]
+    idx_max = 0
+    num_max = arr[0]
+
+    for n in range(len(arr)):
+        if arr[n] > num_max: idx_max = n; num_max = arr[n]
+
+    return [idx_max, num_max]
+
+
 def selection_sort( arr ):
     print(f'{str(arr).center(80, '-')}')
     sorted = []
@@ -61,7 +72,32 @@ def insertion_sort( arr ):
     print(f'  ..sorted {str(unsorted)}')
     return unsorted
 
+def counting_sort( arr ):
+    print(f'{str(arr)} ', end='')
+    min_num = min_arr(arr)[1]
+    unsorted = [int(i - min_num) for i in list(arr.copy())]
+    max_num = max_arr(unsorted)[1]
+    print(f'{unsorted} {max_num}')
+    if max_num == None: return 0    # catch empty input array
+
+    counts = [0]
+    counts *= max_arr(unsorted)[1] + 1
+    for n in unsorted:
+        counts[n] += 1
+    #print(f'  {counts}')
+    
+    sorted = []
+    for m in range(len(counts)):
+        if counts[m] > 0: 
+            elem = [m + min_num] * counts[m]
+            sorted += elem
+    print(f'  ..sorted {str(sorted)}')
+
+    return sorted
+
+
 test_arrays = [[],
+               [3, 5, 8, 2, 5],
                [-1, -2, 0, 1000, 0, -2, 200],
                [-1.9, -2.1, 0, 1000, 0, -2, 200],
                [200, 2, 0, -2, -200, -10]]
@@ -85,3 +121,8 @@ print('')
 print(f' Insertion Sort '.center(80, '='))
 for trial in test_arrays:
     insertion_sort( trial )
+
+print('')
+print(f' Counting Sort '.center(80, '='))
+for trial in test_arrays:
+    counting_sort( trial )
