@@ -44,7 +44,7 @@ def bubble_sort( arr ):
     print(f'  ..sorted {str(unsorted)}')
     return unsorted
 
-def selection_sort( arr ):
+def insertion_sort( arr ):
     print(f'{str(arr)}')
     unsorted = list(arr.copy())
 
@@ -54,9 +54,12 @@ def selection_sort( arr ):
         print(f'  {str(unsorted)}')
         for i in range(len(unsorted) - 1):
             if unsorted[i] > unsorted[i+1]:
-                unsorted[i:i+2] = [unsorted[i+1], unsorted[i]]
+                for j in range(i, -1, -1):
+                    if unsorted[j] > unsorted[j+1]:
+                        unsorted[j:j+2] = [unsorted[j+1], unsorted[j]]
 
-    return 0
+    print(f'  ..sorted {str(unsorted)}')
+    return unsorted
 
 test_arrays = [[],
                [-1, -2, 0, 1000, 0, -2, 200],
@@ -77,3 +80,8 @@ print('')
 print(f' Bubble Sort '.center(80, '='))
 for trial in test_arrays:
     bubble_sort( trial )
+
+print('')
+print(f' Insertion Sort '.center(80, '='))
+for trial in test_arrays:
+    insertion_sort( trial )
