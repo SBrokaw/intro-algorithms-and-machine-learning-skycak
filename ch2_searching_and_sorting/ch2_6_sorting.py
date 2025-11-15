@@ -126,3 +126,17 @@ print('')
 print(f' Counting Sort '.center(80, '='))
 for trial in test_arrays:
     counting_sort( trial )
+
+print('')
+print(f' Word Problems '.center(80, '='))
+print('Q6. Derive the average-case time complexity of bubble sort.')
+print('  Ans. O(n^2)')
+print('Q7. Derive the average-case time complexity of selection sort.')
+print('  Ans. O(n^2)')
+print('Q8. Derive the average-case time complexity of counting sort.')
+print('  Ans. O(n + k) where k is the difference between the largest ')
+print('  and smallest elements in the input array.')
+print('Q9. Construct an example in which counting sort requires drastically more '\
+      'memory than selection, bubble, and insertion sort.')
+print('  Ans. A small input array with a large element will construct an intermediate'\
+      ' array that is huge.')
