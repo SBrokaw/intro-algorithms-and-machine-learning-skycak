@@ -31,3 +31,5 @@ Skycak, J. (2021). Single-Variable Gradient Descent. In Introduction to Algorith
 Skycak, J. (2021). Multivariable Gradient Descent. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/multivariable-gradient-descent/
 
 Skycak, J. (2021). Selection, Bubble, Insertion, and Counting Sort. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/selection-bubble-insertion-and-counting-sort/
+
+Skycak, J. (2021). Merge Sort and Quicksort. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/merge-sort-and-quicksort/
