@@ -2,16 +2,31 @@
 # and Machine Learning: from Sorting to Strategic Agents. 
 # https://justinmath.com/merge-sort-and-quicksort/
 
-def merge( arr1, arr2 ):
+def merge_s( arr1_arg, arr2_arg ):
+    arr1 = arr1_arg.copy()
+    arr2 = arr2_arg.copy()
     sorted = []
-    for i in range(len(arr1 + arr2)):
-        if arr1[0] <= arr2[0]: 
-            sorted += arr1[0]
-            arr1.pop(0)
 
-        else: 
-            sorted += arr2[0]
-            arr2.pop(0)
+    if len(arr1 + arr2) > 2:
+        for i in range( len(arr1 + arr2) - 3 ):
+            if arr1[0] < arr2[0]:
+                sorted[i] = arr1[0]
+            elif arr2[0] <= arr1[0]:
+                sorted[i] = arr2[0]
+
+    if len(arr1 + arr2) == 2:
+        if arr1[0] < arr2[0]:
+            sorted = [arr1[0], arr2[0]]
+        elif arr2[0] <= arr1[0]:
+            sorted = [arr2[0], arr1[0]]
+
+    return sorted
+
+
+
+def merge( arr1, arr2 ):
+    sorted = [i for i in arr1] + [j for j in arr2]
+    sorted.sort()
 
     return sorted
 
@@ -20,17 +35,27 @@ def merge_sort( arr ):
     split = int(n/2)
 
     #base case
-    if n <= 1: return [arr] 
+    if n <= 1: return arr
 
-    merge_sort(arr[0:split])
-    merge_sort(arr[split:n])
+    arr1 = merge_sort(arr[0:split])
+    arr2 = merge_sort(arr[split:n])
+    sorted = merge(arr1, arr2)
 
-    return 0
+    # print(f'\t{arr} .. {arr1} .. {arr2} .. {sorted}')
+    return sorted
 
-print(merge([6, 7], [2]))
 
-trials = [[6, 9, 7, 4, 2, 1, 8, 5]]
+trials = [[9, 6],
+          [-10, 20, 30],
+          [-1, 2],
+          [6, 9, 7, 4, 2, 1, 8, 5]]
 
 print(str(" Merge Sort ".center(80, '=')))
 for t in trials:
-    merge_sort(t)
+    print(f'{t} BEGIN')
+    sorted = merge_sort(t)
+    print(f'\t{t} --> {sorted}')
+
+print(merge_s([6, 9], [1]))
+print(merge_s([6, 9, 3], [1]))
+print(merge_s([6], [1]))
