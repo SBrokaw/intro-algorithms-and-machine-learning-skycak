@@ -46,9 +46,9 @@ def merge_sort( arr ):
 
 def quicksort( arr ):
     arr1 = arr.copy()
-    if len(arr1) == 1: return arr1
+    if len(arr1) <= 1: return arr1
 
-    pivot = arr1[int(random.random() * len(arr1))]
+    pivot = random.choice(arr1)
     lesser = [i for i in arr1 if i < pivot]
     greater = [i for i in arr1 if i > pivot]
     equal = [i for i in arr1 if i == pivot]
