@@ -90,7 +90,14 @@ class Matrix:
                 product[i][j] = dot_product(row, col) 
 
         # print(f'product = {product}')
-        return Matrix(product)
+        self.data = product
+        return self
+
+    def determinant(self):
+        if self.num_cols != self.num_rows:
+            print(f'ERROR! Determinant dimension mismatch. {self.num_rows} != {self.num_cols}')
+            return self
+
 
 matxs = [Matrix([[1, 2], [3, 4]]),
          Matrix([[1, 2, 3], [4, 5, 6]]),
@@ -111,4 +118,5 @@ for A in matxs:
     print(f'A[{A.num_rows},{A.num_cols}]·A_t[{A_t.num_rows},{A_t.num_cols}]')
     A.disp(); A_t.disp()
     A.matrix_multiply(A_t).print()
+    print(f'|A| = {A.determinant()}')
     print()
