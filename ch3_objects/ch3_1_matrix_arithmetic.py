@@ -4,7 +4,7 @@
 
 def dot_product( arr1, arr2 ):
     if len(arr1) != len(arr2):
-        print(f'ERROR! Dimension mismatch. {len(arr1)} != {len(arr2)}')
+        print(f'ERROR! Dot product dimension mismatch. {len(arr1)} != {len(arr2)}')
         return 0
 
     product = 0
@@ -49,7 +49,7 @@ class Matrix:
 
     def add(self, m):
         if self.num_rows != m.num_rows or self.num_cols != m.num_cols:
-            print(f'ERROR! Matrix dimension mismatch. [{self.num_rows}, {self.num_cols}] != [{m.num_rows}, {m.num_cols}]')
+            print(f'ERROR! Matrix add dimension mismatch. [{self.num_rows}, {self.num_cols}] != [{m.num_rows}, {m.num_cols}]')
             return self
 
         for i in range(len(self.data)):
@@ -60,7 +60,7 @@ class Matrix:
 
     def subtract(self, m):
         if self.num_rows != m.num_rows or self.num_cols != m.num_cols:
-            print(f'ERROR! Matrix dimension mismatch. [{self.num_rows}, {self.num_cols}] != [{m.num_rows}, {m.num_cols}]')
+            print(f'ERROR! Matrix subtract dimension mismatch. [{self.num_rows}, {self.num_cols}] != [{m.num_rows}, {m.num_cols}]')
             return self
 
         for i in range(len(self.data)):
@@ -78,23 +78,37 @@ class Matrix:
 
     def matrix_multiply(self, m):
         if self.num_cols != m.num_rows:
-            print(f'ERROR! Matrix dimension mismatch. [{self.num_rows}, {self.num_cols}] != [{m.num_rows}, {m.num_cols}]')
+            print(f'ERROR! Matrix multiply dimension mismatch. [{self.num_rows}, {self.num_cols}] != [{m.num_rows}, {m.num_cols}]')
             return self
 
-        product = [[0] * self.num_rows for c in range(self.num_cols)]
-        for i in range(len(product.data)):
-            for j in range(len(product.data[i])):
-                product[i][j] = dot_product(row, col) #TODO
+        product = [[0] * self.num_rows for c in range(m.num_cols)]
+        for i in range(self.num_rows):
+            for j in range(m.num_cols):
+                row = self.data[i]
+                col = [m.data[k][j] for k in range(self.num_cols)]
+                # print(f'row {row}\tcol {col}')
+                product[i][j] = dot_product(row, col) 
+
+        # print(f'product = {product}')
+        return Matrix(product)
 
 matxs = [Matrix([[1, 2], [3, 4]]),
          Matrix([[1, 2, 3], [4, 5, 6]]),
          Matrix([[-1, -2], [-3, -4], [-5, -6]])]
 
 for A in matxs:
+    print(f'A')
     A.show()
+    print(f'A_t')
     A_t = A.transpose()
     A_t.disp()
+    print(f'A + A_t')
     A.add(A_t).print()
+    print(f'A - A_t')
     A.subtract(A_t).print()
-    A.scalar_multiply(3).print()
+    print(f'-1·A')
+    A.scalar_multiply(-1).print()
+    print(f'A[{A.num_rows},{A.num_cols}]·A_t[{A_t.num_rows},{A_t.num_cols}]')
+    A.disp(); A_t.disp()
+    A.matrix_multiply(A_t).print()
     print()
