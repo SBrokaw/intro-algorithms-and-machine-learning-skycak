@@ -19,6 +19,10 @@ class Matrix:
        self.num_cols = len(self.data[0])
        self.num_rows = len(self.data)
 
+    def update_dims(self):
+       self.num_cols = len(self.data[0])
+       self.num_rows = len(self.data)
+
     def show(self):
         for r in self.data:
             print('[ ', end = '')
@@ -91,12 +95,29 @@ class Matrix:
 
         # print(f'product = {product}')
         self.data = product
+        self.update_dims()
         return self
 
     def determinant(self):
         if self.num_cols != self.num_rows:
             print(f'ERROR! Determinant dimension mismatch. {self.num_rows} != {self.num_cols}')
             return self
+
+        det =  self.determinant_loop(self)
+        return det
+        
+    def determinant_loop(self, m):
+        det = 0
+
+        #base case when matrix is 1x1
+        if m.num_cols == 1 and m.num_rows == 1:
+            return m.data[0]
+
+        for i in range(1, m.num_cols + 1):
+            sub_m = Matrix([[m.data[j][k] for k in range(3) if k != i-1] for j in range(3) if j != 0])
+            det += (-1)*i * m.data[0][i] * self.determinant_loop(sub_m)
+
+        return det
 
 
 matxs = [Matrix([[1, 2], [3, 4]]),
@@ -105,6 +126,8 @@ matxs = [Matrix([[1, 2], [3, 4]]),
 
 for A in matxs:
     print(f'A')
+    A.show()
+    print(f'|A| = {A.determinant()}')
     A.show()
     print(f'A_t')
     A_t = A.transpose()
