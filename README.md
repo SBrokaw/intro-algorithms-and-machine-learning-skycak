@@ -34,4 +34,6 @@ Skycak, J. (2021). Selection, Bubble, Insertion, and Counting Sort. In Introduct
 
 Skycak, J. (2021). Merge Sort and Quicksort. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/merge-sort-and-quicksort/
 
+Skycak, J. (2021). Basic Matrix Arithmetic. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/basic-matrix-arithmetic/
+
 Skycak, J. (2021). Reduced Row Echelon Form and Applications to Matrix Arithmetic. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/reduced-row-echelon-form-and-applications-to-matrix-arithmetic/
