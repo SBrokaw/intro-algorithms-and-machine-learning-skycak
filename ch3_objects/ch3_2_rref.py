@@ -54,21 +54,31 @@ class Matrix:
         cols = [c[:] for c in self.transpose().data]
 
         row_idx = 0
+        pivot_idx = 0
+        print(cols)
         for c in cols:
             # if pivot row exists for column:
-            if c.count(0) == len(c) - 1:
-            #     if pivot row does not match current row_index:
-                pivot_idx = [i for i in c if i != 0][0]
+            pivot_idx = next((i for i, v in enumerate(c) if v != 0 and i >= row_idx), -1)
+            if pivot_idx >= 0:
+                # if pivot row does not match current row_index:
                 if pivot_idx != row_idx:
-            #         swap current row with pivot row
-            #         (so that it matches)
-                    cols[row_idx] = cols[pivot_idx]
+                    # swap current row with pivot row
+                    # (so that it matches)
+                    for v in cols:
+                        temp_val = v[row_idx]
+                        v[row_idx] = v[pivot_idx]
+                        v[pivot_idx] = temp_val
+                    print(f'swap {row_idx},{pivot_idx}\t{cols}')
 
-
-            #     divide pivot row (so that first nonzero entry is 1)
+                # divide pivot row (so that first nonzero entry is 1)
+                scalar = c[row_idx]
+                if scalar != 1:
+                    for v in cols:
+                        v[row_idx] /= scalar
                     
-            #     clear entries below and above pivot entry
-            #     (by subtracting multiples of pivot row)
+                print(f'scale 1/{scalar}\t{cols}')
+                # clear entries below and above pivot entry
+                # (by subtracting multiples of pivot row)
 
                 row_idx += 1
 
@@ -76,6 +86,8 @@ class Matrix:
 
 matxs = [Matrix([[1, -2], [2, -1]]),
          Matrix([[0]]),
+         Matrix([[0, 1, -1], [0, -1, -1], [0, 0, -1]]),
+         Matrix([[-1, 1, -1], [0, -1, -1], [1, 0, -1]]),
          Matrix([[1, 0, -1], [0, 2, 1], [1, -1, 0]])]
 
 for A in matxs:
