@@ -75,8 +75,7 @@ class Matrix:
                 if scalar != 1:
                     for v in cols:
                         v[row_idx] /= scalar
-                    
-                print(f'scale 1/{scalar}\t{cols}')
+                print(f'scale r{row_idx} 1/{scalar}\t{cols}')
                 # clear entries below and above pivot entry
                 # (by subtracting multiples of pivot row)
 
