@@ -68,20 +68,78 @@ class Matrix:
                         temp_val = v[row_idx]
                         v[row_idx] = v[pivot_idx]
                         v[pivot_idx] = temp_val
-                    print(f'swap {row_idx},{pivot_idx}\t{cols}')
+                    # print(f'swap {row_idx},{pivot_idx}\t{cols}')
 
                 # divide pivot row (so that first nonzero entry is 1)
                 scalar = c[row_idx]
                 if scalar != 1:
                     for v in cols:
                         v[row_idx] /= scalar
-                print(f'scale r{row_idx} 1/{scalar}\t{cols}')
+                    # print(f'scale r{row_idx} 1/{scalar}\t{cols}')
+
                 # clear entries below and above pivot entry
                 # (by subtracting multiples of pivot row)
+                clr_idxs = [u for u in range(len(c)) if u != pivot_idx and c[u] != 0]
+                for r in clr_idxs:
+                    clr_scalar = -1 * c[r] / c[pivot_idx]
+                    for c2 in cols:
+                        c2[r] += clr_scalar * c2[pivot_idx]
+                    # print(f'clear r{r} + {clr_scalar}∙r{pivot_idx}\t{cols}')
 
                 row_idx += 1
 
-        return Matrix(rref)
+        return Matrix(cols).transpose()
+
+    def inverse(self):
+        # copy and augment matrix
+        rows = [r[:] for r in self.data]
+        for idx, r in enumerate(rows):
+            augment = [0] * len(rows)
+            augment[idx] = 1
+            rows[idx] += augment
+        
+        augmented = Matrix(rows)
+        
+        cols = [c[:] for c in augmented.transpose().data]
+
+        row_idx = 0
+        pivot_idx = 0
+        print(cols)
+        for c in cols[:augmented.num_rows]:
+            # if pivot row exists for column:
+            pivot_idx = next((i for i, v in enumerate(c) if v != 0 and i >= row_idx), -1)
+            if pivot_idx >= 0:
+                # if pivot row does not match current row_index:
+                if pivot_idx != row_idx:
+                    # swap current row with pivot row
+                    # (so that it matches)
+                    for v in cols:
+                        temp_val = v[row_idx]
+                        v[row_idx] = v[pivot_idx]
+                        v[pivot_idx] = temp_val
+                    # print(f'swap {row_idx},{pivot_idx}\t{cols}')
+
+                # divide pivot row (so that first nonzero entry is 1)
+                scalar = c[row_idx]
+                if scalar != 1:
+                    for v in cols:
+                        v[row_idx] /= scalar
+                    # print(f'scale r{row_idx} 1/{scalar}\t{cols}')
+
+                # clear entries below and above pivot entry
+                # (by subtracting multiples of pivot row)
+                clr_idxs = [u for u in range(len(c)) if u != pivot_idx and c[u] != 0]
+                for r in clr_idxs:
+                    clr_scalar = -1 * c[r] / c[pivot_idx]
+                    for c2 in cols:
+                        c2[r] += clr_scalar * c2[pivot_idx]
+                    # print(f'clear r{r} + {clr_scalar}∙r{pivot_idx}\t{cols}')
+
+                row_idx += 1
+
+
+        return Matrix(cols[augmented.num_rows:]).transpose()
+
 
 matxs = [Matrix([[1, -2], [2, -1]]),
          Matrix([[0]]),
@@ -95,3 +153,5 @@ for A in matxs:
     print('RREF(A)')
     A_rref = A.rref()
     A_rref.print()
+    A_inv = A.inverse()
+    A_inv.print()
