@@ -13,12 +13,15 @@ class Matrix:
     @property
     def num_cols(self): return len(self.data[0])
 
+    @property
+    def is_empty(self): return True if len(self.data[0]) == 0 else False
+
     def show(self):
         for r in self.data:
             print('[ ', end = '')
             for i in range(len(r)):
                 end_char = ']' if i == len(r) - 1 else ', '
-                print(f'{r[i]} {end_char}', end = '')
+                print(f'{r[i]:.3g} {end_char}', end = '')
             print('')
         return 0
 
@@ -55,7 +58,7 @@ class Matrix:
 
         row_idx = 0
         pivot_idx = 0
-        print(cols)
+        # print(cols)
         for c in cols:
             # if pivot row exists for column:
             pivot_idx = next((i for i, v in enumerate(c) if v != 0 and i >= row_idx), -1)
@@ -91,6 +94,10 @@ class Matrix:
         return Matrix(cols).transpose()
 
     def inverse(self):
+        if self.num_cols != self.num_rows:
+            print(f'ERROR! Matrix is not square. Dims={self.num_rows}x{self.num_cols}')
+            return Matrix([[]])
+
         # copy and augment matrix
         rows = [r[:] for r in self.data]
         for idx, r in enumerate(rows):
@@ -104,7 +111,7 @@ class Matrix:
 
         row_idx = 0
         pivot_idx = 0
-        print(cols)
+        # print(cols)
         for c in cols[:augmented.num_rows]:
             # if pivot row exists for column:
             pivot_idx = next((i for i, v in enumerate(c) if v != 0 and i >= row_idx), -1)
@@ -143,9 +150,13 @@ class Matrix:
 
 matxs = [Matrix([[1, -2], [2, -1]]),
          Matrix([[0]]),
+         Matrix([[]]),
          Matrix([[0, 1, -1], [0, -1, -1], [0, 0, -1]]),
          Matrix([[-1, 1, -1], [0, -1, -1], [1, 0, -1]]),
-         Matrix([[1, 0, -1], [0, 2, 1], [1, -1, 0]])]
+         Matrix([[1, 0, -1], [0, 2, 1], [1, -1, 0]]),
+         Matrix([[-1, 1, -1], [0, -1, -1]]),
+         Matrix([[-1, 1], [0, -1], [1, 0]])
+         ]
 
 for A in matxs:
     print('Matrix A')
@@ -153,5 +164,7 @@ for A in matxs:
     print('RREF(A)')
     A_rref = A.rref()
     A_rref.print()
+    print('A^-1')
     A_inv = A.inverse()
     A_inv.print()
+    print()
