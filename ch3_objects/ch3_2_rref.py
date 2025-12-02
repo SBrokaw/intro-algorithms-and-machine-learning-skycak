@@ -20,9 +20,9 @@ class Matrix:
         for r in self.data:
             print('[ ', end = '')
             for i in range(len(r)):
-                end_char = ']' if i == len(r) - 1 else ', '
+                end_char = '' if i == len(r) - 1 else ', '
                 print(f'{r[i]:.3g} {end_char}', end = '')
-            print('')
+            print(']')
         return 0
 
     def print(self):
@@ -53,6 +53,10 @@ class Matrix:
         return Matrix(transposed)
 
     def rref(self):
+        if self.data == [[]]: 
+            print(f'ERROR! RREF does not exist for matrix {self.data}.')
+            return Matrix([[]])
+
         rref = [r[:] for r in self.data]
         cols = [c[:] for c in self.transpose().data]
 
@@ -96,6 +100,9 @@ class Matrix:
     def inverse(self):
         if self.num_cols != self.num_rows:
             print(f'ERROR! Matrix is not square. Dims={self.num_rows}x{self.num_cols}')
+            return Matrix([[]])
+        if self.data == [[]] or self.data == [[0]]:
+            print(f'ERROR! Inverse does not exist for matrix {self.data}.')
             return Matrix([[]])
 
         # copy and augment matrix
@@ -144,12 +151,67 @@ class Matrix:
 
                 row_idx += 1
 
-
         return Matrix(cols[augmented.num_rows:]).transpose()
 
 
+    def determinant(self):
+        if self.num_cols != self.num_rows:
+            print(f'ERROR! Determinant does not exist for non-square matrix. RxC={self.num_rows}x{self.num_cols}')
+            return None
+        if self.data == [[]]:
+            print(f'ERROR! Determinant does not exist for matrix {self.data}.')
+            return None
+
+        cols = [c[:] for c in self.transpose().data]
+
+        row_idx = 0
+        pivot_idx = 0
+        determinant = 1
+        determinant_divisor = 1
+        determinant_sign = 1
+        # print(cols)
+        for c in cols:
+            # if pivot row exists for column:
+            pivot_idx = next((i for i, v in enumerate(c) if v != 0 and i >= row_idx), -1)
+            if pivot_idx >= 0:
+                # if pivot row does not match current row_index:
+                if pivot_idx != row_idx:
+                    # swap current row with pivot row
+                    # (so that it matches)
+                    for v in cols:
+                        temp_val = v[row_idx]
+                        v[row_idx] = v[pivot_idx]
+                        v[pivot_idx] = temp_val
+
+                    determinant_sign *= -1
+                    # print(f'swap {row_idx},{pivot_idx}\t{cols}')
+
+                # divide pivot row (so that first nonzero entry is 1)
+                scalar = c[row_idx]
+                if scalar != 1:
+                    for v in cols:
+                        v[row_idx] /= scalar
+
+                    determinant_divisor *= scalar
+                    # print(f'scale r{row_idx} 1/{scalar}\t{cols}')
+
+                # clear entries below and above pivot entry
+                # (by subtracting multiples of pivot row)
+                clr_idxs = [u for u in range(len(c)) if u != pivot_idx and c[u] != 0]
+                for r in clr_idxs:
+                    clr_scalar = -1 * c[r] / c[pivot_idx]
+                    for c2 in cols:
+                        c2[r] += clr_scalar * c2[pivot_idx]
+                    # print(f'clear r{r} + {clr_scalar}∙r{pivot_idx}\t{cols}')
+
+                row_idx += 1
+
+        determinant = determinant_sign / determinant_divisor
+        return determinant
+
 matxs = [Matrix([[1, -2], [2, -1]]),
          Matrix([[0]]),
+         Matrix([[4]]),
          Matrix([[]]),
          Matrix([[0, 1, -1], [0, -1, -1], [0, 0, -1]]),
          Matrix([[-1, 1, -1], [0, -1, -1], [1, 0, -1]]),
@@ -167,4 +229,7 @@ for A in matxs:
     print('A^-1')
     A_inv = A.inverse()
     A_inv.print()
+    print('|A|')
+    det = A.determinant()
+    if det: print(f'  |A| = {det}')
     print()
