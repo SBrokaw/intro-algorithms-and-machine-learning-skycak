@@ -79,8 +79,9 @@ class Matrix:
 
                 # divide pivot row (so that first nonzero entry is 1)
                 scalar = rref[row_idx][row_idx]
-                rref[row_idx] = [k / scalar for k in rref[row_idx]]
-                print(f'  scale r{row_idx} 1/{scalar}\t{rref}')
+                if scalar != 0 and scalar != 1:
+                    rref[row_idx] = [k / scalar for k in rref[row_idx]]
+                    print(f'  scale r{row_idx} 1/{scalar}\t{rref}')
 
                 # clear entries below and above pivot entry
                 # (by subtracting multiples of pivot row)
