@@ -75,21 +75,22 @@ class Matrix:
                     temp_row = rref[row_idx]
                     rref[row_idx] = rref[pivot_idx]
                     rref[pivot_idx] = temp_row
-                    print(f'  swap {row_idx},{pivot_idx}\t{rref}')
+                    # print(f'  swap {row_idx},{pivot_idx}\t{rref}')
 
                 # divide pivot row (so that first nonzero entry is 1)
                 scalar = rref[row_idx][row_idx]
                 if scalar != 0 and scalar != 1:
                     rref[row_idx] = [k / scalar for k in rref[row_idx]]
-                    print(f'  scale r{row_idx} 1/{scalar}\t{rref}')
+                    # print(f'  scale r{row_idx} 1/{scalar}\t{rref}')
 
                 # clear entries below and above pivot entry
                 # (by subtracting multiples of pivot row)
-                clr_rows = [u for u in range(len(self.col(i))) if u != row_idx and self.col(u) != 0]
+                clr_rows = [u for u in range(len(self.col(i))) if u != row_idx and rref[u][i] != 0]
+                # print(f'  clr_rows {clr_rows} {i} {row_idx} {rref}')
                 for clr in clr_rows:
-                    k = rref[clr][row_idx] / rref[row_idx][row_idx]
+                    k = rref[clr][row_idx] / rref[row_idx][i]
                     rref[clr] = [rref[clr][u] - k*rref[row_idx][u] for u in range(len(rref[clr]))]
-                    print(f'  clear r{clr} - {k}∙r{row_idx}\t{rref}')
+                    # print(f'  clear r{clr} - {k}∙r{row_idx}\t{rref}')
 
                 row_idx += 1
 
