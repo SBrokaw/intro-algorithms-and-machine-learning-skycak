@@ -34,13 +34,15 @@ class Matrix:
     def display(self):
         return self.show()
 
+    # return 0-indexed column j
     def col(self, j):
-        if j < 1 or j > self.num_cols: return None
-        return [self.data[k][j-1] for k in range(self.num_rows)]
+        if j < 0 or j > self.num_cols - 1: return None
+        return [self.data[k][j] for k in range(self.num_rows)]
 
+    # return 0-indexed row i
     def row(self, i):
-        if i < 1 or i > self.num_rows: return None
-        return self.data[i-1]
+        if i < 0 or i > self.num_rows - 1: return None
+        return self.data[i]
 
     def transpose(self):
         rows = len(self.data)
@@ -52,13 +54,53 @@ class Matrix:
 
         return Matrix(transposed)
 
-    # TODO
     def rref(self):
-        return Matrix(None)
+        if self.data == [[]]: 
+            print(f'ERROR! RREF does not exist for matrix {self.data}.')
+            return Matrix([[]])
+
+        rref = [r[:] for r in self.data]
+
+        row_idx = 0
+        pivot_idx = 0
+        # print(rref)
+        for i in range(self.num_cols):
+            # if pivot row exists for column:
+            pivot_idx = next((j for j, v in enumerate(self.col(i)) if v != 0 and j >= row_idx), -1)
+            if pivot_idx >= 0:
+                # if pivot row does not match current row_index:
+                if pivot_idx != row_idx:
+                    # swap current row with pivot row
+                    # (so that it matches)
+                    temp_row = rref[row_idx]
+                    rref[row_idx] = rref[pivot_idx]
+                    rref[pivot_idx] = temp_row
+                    print(f'  swap {row_idx},{pivot_idx}\t{rref}')
+
+                # divide pivot row (so that first nonzero entry is 1)
+                scalar = rref[row_idx][row_idx]
+                rref[row_idx] = [k / scalar for k in rref[row_idx]]
+                print(f'  scale r{row_idx} 1/{scalar}\t{rref}')
+
+                # clear entries below and above pivot entry
+                # (by subtracting multiples of pivot row)
+                clr_rows = [u for u in range(len(self.col(i))) if u != row_idx and self.col(u) != 0]
+                for clr in clr_rows:
+                    k = rref[clr][row_idx] / rref[row_idx][row_idx]
+                    rref[clr] = [rref[clr][u] - k*rref[row_idx][u] for u in range(len(rref[clr]))]
+                    print(f'  clear r{clr} - {k}∙r{row_idx}\t{rref}')
+
+                row_idx += 1
+
+        return Matrix(rref)
 
     # TODO
     def inverse(self):
-        return Matrix(None)
+        return Matrix([[]])
+
+    # TODO
+    def determinant(self):
+        return 0
 
     def rref_old(self):
         if self.data == [[]]: 
