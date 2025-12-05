@@ -66,7 +66,8 @@ class Matrix:
         # print(rref)
         for i in range(self.num_cols):
             # if pivot row exists for column:
-            pivot_idx = next((j for j, v in enumerate(self.col(i)) if v != 0 and j >= row_idx), -1)
+            col_i = [rref[u][i] for u in range(self.num_rows)]
+            pivot_idx = next((j for j, v in enumerate(col_i) if v != 0 and j >= row_idx), -1)
             if pivot_idx >= 0:
                 # if pivot row does not match current row_index:
                 if pivot_idx != row_idx:
@@ -75,22 +76,23 @@ class Matrix:
                     temp_row = rref[row_idx]
                     rref[row_idx] = rref[pivot_idx]
                     rref[pivot_idx] = temp_row
-                    # print(f'  swap {row_idx},{pivot_idx}\t{rref}')
+                    print(f'  swap {row_idx},{pivot_idx}\t{rref}')
 
                 # divide pivot row (so that first nonzero entry is 1)
-                scalar = rref[row_idx][row_idx]
+                scalar = rref[row_idx][i]
                 if scalar != 0 and scalar != 1:
                     rref[row_idx] = [k / scalar for k in rref[row_idx]]
-                    # print(f'  scale r{row_idx} 1/{scalar}\t{rref}')
+                    print(f'  scale r{row_idx} 1/{scalar}\t{rref}')
 
                 # clear entries below and above pivot entry
                 # (by subtracting multiples of pivot row)
                 clr_rows = [u for u in range(len(self.col(i))) if u != row_idx and rref[u][i] != 0]
-                # print(f'  clr_rows {clr_rows} {i} {row_idx} {rref}')
+                print(f'  clr_rows:{clr_rows} i:{i} row_idx:{row_idx} {rref}')
                 for clr in clr_rows:
-                    k = rref[clr][row_idx] / rref[row_idx][i]
-                    rref[clr] = [rref[clr][u] - k*rref[row_idx][u] for u in range(len(rref[clr]))]
-                    # print(f'  clear r{clr} - {k}∙r{row_idx}\t{rref}')
+                    if rref[row_idx][i] == 0: continue
+                    k = rref[clr][i] / rref[row_idx][i]
+                    rref[clr] = [rref[clr][u] - k * rref[row_idx][u] for u in range(len(rref[clr]))]
+                    print(f'  clear r{clr} - {k}∙r{row_idx}\t{rref}')
 
                 row_idx += 1
 
@@ -263,7 +265,12 @@ class Matrix:
         determinant = determinant_sign * determinant_scalar
         return determinant
 
-matxs = [Matrix([[1, -2], [2, -1]]),
+matxs = [
+         Matrix([[1, -2], [2, -1]]),
+         Matrix([[0, -2], [2, -1]]),
+         Matrix([[0, 0], [2, -1]]),
+         Matrix([[0, 0], [1, 0]]),
+         Matrix([[0, 0], [0, 0]]),
          Matrix([[0]]),
          Matrix([[4]]),
          Matrix([[]]),
@@ -272,6 +279,7 @@ matxs = [Matrix([[1, -2], [2, -1]]),
          Matrix([[0, 5, -1], [0, 0, -1], [-1, 0, -1]]),
          Matrix([[0, 0, 0], [0, 2, 1], [1, -1, 0]]),
          Matrix([[1, 0, -1], [0, 2, 1], [1, -1, 0]]),
+         Matrix([[0, 0, 0], [0, 2, 0], [0, -1, 0]]),
          Matrix([[-1, 1, -1], [0, -1, -1]]),
          Matrix([[-1, 1], [0, -1], [1, 0]])
          ]
