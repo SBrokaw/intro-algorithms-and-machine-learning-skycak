@@ -6,19 +6,53 @@ from dataclasses import dataclass
 
 @dataclass
 class Cluster:
-    i: int
+    k_val: int
     data: list
-    centers: list
+
+    def center(self, i):
+        if len(self.data) == 0: return 0
+        if i > len(self.data[0]): return 0
+
+        avg = 0
+        for d in self.data:
+            avg += d[i]
+
+        return avg / len(self.data) 
+
+    def centers(self):
+        if len(self.data) == 0: return [0]
+
+        avgs = [0] * len(self.data[0])
+        for i in range(len(self.data[0])):
+            for d in self.data:
+                avgs[i] += d[i] 
+
+        return [i / len(self.data) for i in avgs]
+
+    def pretty_centers(self):
+        pretty_centers = [f'{i: .3g}' for i in self.centers()]
+        return pretty_centers
+
+def distance(v1, v2):
+    d = sum([(p1 + p2) ** 2 for p1, p2 in zip(v1, v2)])
+    return d ** (1/2)
+
+def distances(v1, clusters):
+    return [distance(v1, c.centers()) for c in clusters]
 
 def k_means_cluster(labels, data, k):
-    clusters = [Cluster(i, [], []) for i in range(k)]
+    clusters = [Cluster(i, []) for i in range(k)]
+    print(clusters)
     for d in data:
-        clusters[int(random())] += d
+        random_cluster = int(random() * k)
+        clusters[random_cluster].data += [d]
 
-    for i, vals in clusters.items():
-        print(f'cluster{i}')
-        for v in vals:
-            print(f'  {v}')
+    for c in clusters:
+        print(f'cluster{c.k_val} centers:{c.pretty_centers()}')
+        for item in c.data:
+            print(f'  {item}')
+
+    # calculate distances
     
     return 0
 
