@@ -1,9 +1,29 @@
 # Skycak, J. (2021). K-Means Clustering. In Introduction to Algorithms 
 # and Machine Learning: from Sorting to Strategic Agents. 
 # https://justinmath.com/k-means-clustering/
+from random import random
+from dataclasses import dataclass
+
+@dataclass
+class Cluster:
+    i: int
+    data: list
+    centers: list
+
+def k_means_cluster(labels, data, k):
+    clusters = [Cluster(i, [], []) for i in range(k)]
+    for d in data:
+        clusters[int(random())] += d
+
+    for i, vals in clusters.items():
+        print(f'cluster{i}')
+        for v in vals:
+            print(f'  {v}')
+    
+    return 0
+
 
 columns = ['Portion Eggs', 'Portion Butter', 'Portion Sugar', 'Portion Flour']
-
 data = [
     [0.14, 0.14, 0.28, 0.44],
     [0.22, 0.1,  0.45, 0.33],
@@ -25,3 +45,5 @@ data = [
     [0.22, 0.07, 0.4,  0.38],
     [0.2,  0.18, 0.3,  0.4 ]
 ]
+
+k_means_cluster(columns, data, 3)
