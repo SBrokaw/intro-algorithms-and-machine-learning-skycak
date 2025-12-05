@@ -68,6 +68,7 @@ class Matrix:
             # if pivot row exists for column:
             col_i = [rref[u][i] for u in range(self.num_rows)]
             pivot_idx = next((j for j, v in enumerate(col_i) if v != 0 and j >= row_idx), -1)
+            print(f'  swap? pivot_idx:{pivot_idx} row_idx:{row_idx} {rref}')
             if pivot_idx >= 0:
                 # if pivot row does not match current row_index:
                 if pivot_idx != row_idx:
