@@ -34,13 +34,17 @@ class Cluster:
         return pretty_centers
 
 def distance(v1, v2):
-    d = sum([(p1 + p2) ** 2 for p1, p2 in zip(v1, v2)])
+    d = sum([(p2 - p1) ** 2 for p1, p2 in zip(v1, v2)])
     return d ** (1/2)
 
-def distances(v1, clusters):
-    return [distance(v1, c.centers()) for c in clusters]
+def distances(v1, centers):
+    return [distance(v1, c) for c in centers]
+
+def pretty_distances(v1, centers):
+    return [f'{i: .3g}' for i in distances(v1, centers)]
 
 def k_means_cluster(labels, data, k):
+    # randomly assign data to k initial clusters
     clusters = [Cluster(i, []) for i in range(k)]
     print(clusters)
     for d in data:
@@ -53,7 +57,14 @@ def k_means_cluster(labels, data, k):
             print(f'  {item}')
 
     # calculate distances
+    centers = [c.centers() for c in clusters]
+    for c in clusters:
+        for d in c.data:
+            dists = distances(d, centers)
+            new_cluster = min(range(len(dists)), key=lambda i: dists[i])
+            print(f'item:{d} dists:{pretty_distances(d, centers)} new_c:{new_cluster}') 
     
+
     return 0
 
 
