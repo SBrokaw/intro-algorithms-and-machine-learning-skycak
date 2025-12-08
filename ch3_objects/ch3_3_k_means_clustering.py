@@ -57,13 +57,49 @@ def k_means_cluster(labels, data, k):
             print(f'  {item}')
 
     # calculate distances
-    centers = [c.centers() for c in clusters]
-    for c in clusters:
-        for d in c.data:
-            dists = distances(d, centers)
-            new_cluster = min(range(len(dists)), key=lambda i: dists[i])
-            print(f'item:{d} dists:{pretty_distances(d, centers)} new_c:{new_cluster}') 
+    swapped = True
+    while swapped:
+        print("")
+        swapped = False
+        new_clusters = [Cluster(i, []) for i in range(k)]
+        centers = [c.centers() for c in clusters]
+        for c in clusters:
+            for d in c.data:
+                dists = distances(d, centers)
+                new_cluster = min(range(len(dists)), key=lambda i: dists[i])
+                print(  f'{d} '.ljust(30)
+                      + f'dists:{pretty_distances(d, centers)} '.ljust(50)
+                      + f'c{c.k_val}->c{new_cluster} '
+                      + f'{"!" if c.k_val!=new_cluster else ""}') 
+                new_clusters[new_cluster].data += [d]
+                if c.k_val != new_cluster: 
+                    swapped |= True
+                    # for cc in clusters:
+                    #     print(f'cluster{cc.k_val} centers:{cc.pretty_centers()}')
+                    #     for item in cc.data:
+                    #         print(f'  {item}')
+                    # for cc in new_clusters:
+                    #     print(f'new_cluster{cc.k_val} centers:{cc.pretty_centers()}')
+                    #     for item in cc.data:
+                    #         print(f'  {item}')
+            
+        clusters = new_clusters[:]
     
+    column_spacing = 15
+    screen_width = column_spacing * len(labels)
+    print(f"".center(screen_width, ' '))
+    print(f" Final Clusters ".center(screen_width, '='))
+    for label in labels:
+        print(f'{label}'.center(column_spacing), end='')
+    print()
+    print(f"".center(screen_width, '‾'))
+
+    for c in clusters:
+        print(f'cluster{c.k_val} centers:{c.pretty_centers()}')
+        for item in c.data:
+            for val in item:
+                print(f'{val}'.center(column_spacing), end = '')
+            print()
 
     return 0
 
