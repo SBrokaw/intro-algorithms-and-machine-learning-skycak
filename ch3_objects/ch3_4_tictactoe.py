@@ -5,7 +5,6 @@ from random import random as rand
 
 class Game:
     def __init__(self, player1, player2):
-        print(" Tic-Tac-Toe! ".center(40, '='))
         self.board = [[' ' for _ in range(3)] for _ in range(3)]
         self.move_history = [] # array of moves for this game (ex. ["XA0", "OA1", "XB1", "OB0", "XC3"])
         self.winner = "No player"
@@ -20,7 +19,7 @@ class Game:
                             [(0,0), (1,1), (2,2)],
                             [(0,2), (1,1), (2,0)]]
 
-        self.print_board()
+        # self.print_board()
 
     def print_board(self):
         print(f"3  {self.board[0][0]} | {self.board[0][1]} | {self.board[0][2]}  Move History:{self.move_history}") 
@@ -56,7 +55,7 @@ class Game:
         for line in self.WIN_LINES:
             a, b, c = (self.board[r][c] for r, c in line)
             if (a == b == c) and a != ' ': 
-                print(f"  win! {line} a:{a} b:{b} c:{c}")
+                # print(f"  win! {line} a:{a} b:{b} c:{c}")
                 self.winner = a
                 return False # win line found!
 
@@ -79,20 +78,25 @@ class Game:
 
         if is_logging: self.move_history += [f"{player.piece}{move}"]
 
-        print(f"  history:", self.move_history, move, r, c)
+        # print(f"  history:", self.move_history, move, r, c)
         # self.print_board()
         return 0
 
     def run( self, is_logging ):
         while self.is_playing:
-            self.take_turn(player1, player1.choose_move(self), is_logging)
+            board_copy = [row[:] for row in self.board]
+            self.take_turn(player1, player1.choose_move(board_copy), is_logging)
             if self.is_gameover: break
-            self.take_turn(player2, player2.choose_move(self), is_logging)
+            board_copy = [row[:] for row in self.board]
+            self.take_turn(player2, player2.choose_move(board_copy), is_logging)
             if self.is_gameover: break
 
-        self.print_board()
-        print(f" Game Over —— {self.winner} Wins! ".center(40, '—'))
-        return 0
+        if is_logging:
+            self.print_board()
+            print(f" Game Over —— {self.winner} Wins! ".center(40, '—'))
+            print(f"".center(40, '‾'))
+
+        return self.winner
 
 
 class RandomPlayer:
@@ -122,21 +126,227 @@ class ManualPlayer:
         print(f"  human move:{move}")
         return move
 
+
+class Player:
+    def __init__( self, strategy_func ):
+        self.piece = ''
+        self.strategy_func = strategy_func
+    
+    def choose_move( self, board ):
+        return self.strategy_func( board, self.piece )
+
+def print_board( board ):
+    print(f"3  {board[0][0]} | {board[0][1]} | {board[0][2]}") 
+    print("  ———+———+———")
+    print(f"2  {board[1][0]} | {board[1][1]} | {board[1][2]}")  
+    print("  ———+———+———")
+    print(f"1  {board[2][0]} | {board[2][1]} | {board[2][2]}")  
+    print("   A   B   C")
+
+def possible_moves( board ):
+    col_ids = ['A', 'B', 'C']
+    row_ids = ['3', '2', '1']
+    valid_indices = []
+    for row_id, row in zip(row_ids, board):
+        for col_id, cell in zip(col_ids, row):
+            if cell == ' ': valid_indices += [f"{col_id}{row_id}"]
+
+    # print(f"  valid_moves:{valid_indices}")
+    return valid_indices
+
+def random_moves_strat( board, piece ):
+    valid_moves = possible_moves(board)
+    random_idx = int(rand() * len(valid_moves))
+    # print(f"  valid_moves[{random_idx}] {valid_moves}")
+    return valid_moves[random_idx]
+
+def manual_moves_strat( board, piece ):
+    print_board(board)
+    valid_moves = possible_moves(board)
+    print(f"  Valid Moves: {valid_moves}")
+    move = input(f"  Input Move eg. \"{valid_moves[int(rand() * len(valid_moves))]}\" -->")
+    # input validation
+    if len(move) < 2: 
+        return 0
+    move = move.strip().upper()[0:2]
+    print(f"  human move:{move}")
+    return move
+
+def cheater_strat( board, piece ):
+    board = [['O' for _ in range(3)] for _ in range(3)]
+    return "A1"
+
+def possible_corners( board ):
+    corners = ["A1", "A3", "C1", "C3"]
+    return [corner for corner in possible_moves(board) if corner in corners]
+
+def parse_indices( indices ):
+    r = int(indices[0])
+    c = int(indices[1])
+    col_ids = ['A', 'B', 'C']
+    row_ids = ['3', '2', '1']
+    return f"{col_ids[c]}{row_ids[r]}"
+
+def custom_strat( board, piece ):
+    win_lines = [   [(0,0), (0,1), (0,2)],
+                    [(1,0), (1,1), (1,2)],
+                    [(2,0), (2,1), (2,2)],
+                    [(0,0), (1,0), (2,0)],
+                    [(0,1), (1,1), (2,1)],
+                    [(0,2), (1,2), (2,2)],
+                    [(0,0), (1,1), (2,2)],
+                    [(0,2), (1,1), (2,0)]]
+    # check win lines for two-in-a-rows
+    for line in win_lines:
+        a, b, c = (board[r][c] for r, c in line)
+        vals = [a, b, c]
+        if vals.count(piece) == 2 and vals.count(' ') == 1:
+            # winner found! return the empty cell
+            move = [[r, c] for r, c, in line if board[r][c] == ' ']
+            grid_location = parse_indices(move[0])
+            return grid_location
+    # fill corners
+    valid_moves = possible_corners(board)
+    if valid_moves: 
+        return valid_moves[int(rand() * len(valid_moves))]
+
+    # then pick random squares
+    valid_moves = possible_moves(board)
+    if valid_moves: 
+        return valid_moves[int(rand() * len(valid_moves))]
+
+    return "Z0"
+
+def custom_strat2( board, piece ):
+    win_lines = [   [(0,0), (0,1), (0,2)],
+                    [(1,0), (1,1), (1,2)],
+                    [(2,0), (2,1), (2,2)],
+                    [(0,0), (1,0), (2,0)],
+                    [(0,1), (1,1), (2,1)],
+                    [(0,2), (1,2), (2,2)],
+                    [(0,0), (1,1), (2,2)],
+                    [(0,2), (1,1), (2,0)]]
+    # check win lines for two-in-a-rows
+    for line in win_lines:
+        a, b, c = (board[r][c] for r, c in line)
+        vals = [a, b, c]
+        if vals.count(piece) == 2 and vals.count(' ') == 1:
+            # winner found! return the empty cell
+            move = [[r, c] for r, c, in line if board[r][c] == ' ']
+            grid_location = parse_indices(move[0])
+            return grid_location
+
+    # then pick random squares
+    valid_moves = possible_moves(board)
+    if valid_moves: 
+        return valid_moves[int(rand() * len(valid_moves))]
+
+    return "Z0"
+
+
+
+
     
 # NPC vs. NPC
-player1 = RandomPlayer()
-player2 = RandomPlayer()
-game = Game(player1, player2)
-game.run(True)
+# player1 = RandomPlayer()
+# player2 = RandomPlayer()
+# game = Game(player1, player2)
+# game.run(True)
 
-# Player1 Human vs. NPC
-player1 = ManualPlayer()
-player2 = RandomPlayer()
-game = Game(player1, player2)
-game.run(True)
+stats = []
+print(" Tic-Tac-Toe! ".center(40, '='))
+N = 100
+x_wins = 0
+o_wins = 0
+for n in range(N):
+    player1 = Player(random_moves_strat)
+    player2 = Player(custom_strat)
+    game = Game(player1, player2)
+    winner = game.run(False)
+    if winner == 'X':
+        x_wins += 1
+    elif winner == 'O':
+        o_wins += 1
 
-# NPC vs. Player2 Human
-player1 = RandomPlayer()
-player2 = ManualPlayer()
-game = Game(player1, player2)
-game.run(True)
+stats += [f"Player2 O Custom Strat Win Ratio:{o_wins/(o_wins + x_wins):.3f} {o_wins}/{o_wins + x_wins}"]
+print("".center(40, '‾'))
+
+print(" Tic-Tac-Toe! ".center(40, '='))
+N = 100
+x_wins = 0
+o_wins = 0
+for n in range(N):
+    player1 = Player(custom_strat)
+    player2 = Player(random_moves_strat)
+    game = Game(player1, player2)
+    winner = game.run(False)
+    if winner == 'X':
+        x_wins += 1
+    elif winner == 'O':
+        o_wins += 1
+
+stats += [f"Player1 X Custom Strat Win Ratio:{x_wins/(o_wins + x_wins):.3f} {x_wins}/{o_wins + x_wins}"]
+print("".center(40, '‾'))
+
+print(" Tic-Tac-Toe! ".center(40, '='))
+N = 100
+x_wins = 0
+o_wins = 0
+for n in range(N):
+    player1 = Player(random_moves_strat)
+    player2 = Player(custom_strat2)
+    game = Game(player1, player2)
+    winner = game.run(False)
+    if winner == 'X':
+        x_wins += 1
+    elif winner == 'O':
+        o_wins += 1
+
+stats += [f"Player2 O custom_strat2() Win Ratio:{o_wins/(o_wins + x_wins):.3f} {o_wins}/{o_wins + x_wins}"]
+print("".center(40, '‾'))
+
+print(" Tic-Tac-Toe! ".center(40, '='))
+N = 100
+x_wins = 0
+o_wins = 0
+for n in range(N):
+    player1 = Player(custom_strat2)
+    player2 = Player(random_moves_strat)
+    game = Game(player1, player2)
+    winner = game.run(False)
+    if winner == 'X':
+        x_wins += 1
+    elif winner == 'O':
+        o_wins += 1
+
+stats += [f"Player1 X custom_strat2 Win Ratio:{x_wins/(o_wins + x_wins):.3f} {x_wins}/{o_wins + x_wins}"]
+print("".center(40, '‾'))
+
+for s in stats: print(s)
+
+# player1 = Player(random_moves_strat)
+# player2 = Player(random_moves_strat)
+# game = Game(player1, player2)
+# game.run(True)
+
+# player1 = Player(random_moves_strat)
+# player2 = Player(manual_moves_strat)
+# game = Game(player1, player2)
+# game.run(True)
+
+# player1 = Player(random_moves_strat)
+# player2 = Player(cheater_strat)
+# game = Game(player1, player2)
+# game.run(True)
+
+# # Player1 Human vs. NPC
+# player1 = ManualPlayer()
+# player2 = RandomPlayer()
+# game = Game(player1, player2)
+# game.run(True)
+
+# # NPC vs. Player2 Human
+# player1 = RandomPlayer()
+# player2 = ManualPlayer()
+# game = Game(player1, player2)
+# game.run(True)
