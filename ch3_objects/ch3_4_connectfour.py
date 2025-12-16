@@ -5,7 +5,7 @@ from random import random as rand
 
 class Game:
     def __init__(self, player1, player2):
-        self.board = [[' ' for _ in range(3)] for _ in range(3)]
+        self.board = [['∙' for _ in range(7)] for _ in range(6)]
         self.move_history = [] # array of moves for this game (ex. ["XA0", "OA1", "XB1", "OB0", "XC3"])
         self.winner = "No player"
         player1.piece = 'X'
@@ -22,24 +22,26 @@ class Game:
         # self.print_board()
 
     def print_board(self):
-        print(f"3  {self.board[0][0]} | {self.board[0][1]} | {self.board[0][2]}  Move History:{self.move_history}") 
-        print("  ———+———+———")
-        print(f"2  {self.board[1][0]} | {self.board[1][1]} | {self.board[1][2]}")  
-        print("  ———+———+———")
-        print(f"1  {self.board[2][0]} | {self.board[2][1]} | {self.board[2][2]}")  
-        print("   A   B   C")
+        for r_idx, row in enumerate(self.board):
+            print(f"{len(self.board) - r_idx} |", end='')
+            for cell in row:
+                print(f"{cell} ", end='')
+            print()
+        print("   ‾‾‾‾‾‾‾‾‾‾‾‾‾")
+        print(f"   A B C D E F G")
+
+    def board_col( board, c ):
+        return [r[c] for r in board]
 
     def is_valid_move( self, m ):
         return True if m in self.valid_moves else False
 
     @property
     def valid_moves(self):
-        col_ids = ['A', 'B', 'C']
-        row_ids = ['3', '2', '1']
+        col_ids = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
         valid_indices = []
-        for row_id, row in zip(row_ids, self.board):
-            for col_id, cell in zip(col_ids, row):
-                if cell == ' ': valid_indices += [f"{col_id}{row_id}"]
+        for col_id, cell in zip(col_ids, self.board[0]):
+            if cell == '∙': valid_indices += [f"{col_id}"]
 
         # print(f"  valid_moves:{valid_indices}")
         return valid_indices
@@ -51,29 +53,30 @@ class Game:
             self.winner = "Nobody"
             return False
 
-        # check all 8 combinations to see if there is any 3-in-a-row
-        for line in self.WIN_LINES:
-            a, b, c = (self.board[r][c] for r, c in line)
-            if (a == b == c) and a != ' ': 
-                # print(f"  win! {line} a:{a} b:{b} c:{c}")
-                self.winner = a
-                return False # win line found!
+        # check all combinations to see if there is any winner
+        # for line in self.WIN_LINES:
+        #     a, b, c, d = (self.board[r][c] for r, c in line)
+        #     if (a == b == c) and a != '∙': 
+        #         # print(f"  win! {line} a:{a} b:{b} c:{c}")
+        #         self.winner = a
+        #         return False # win line found!
 
-        return True # no match. return True
+        return True # no winners
 
     @property
     def is_gameover(self):
         return not self.is_playing
 
     def parse_move( self, move ):
-        if not self.is_valid_move(move): return -1, -1
+        if not self.is_valid_move(move): return -1
         c = ord(move[0].lower()) - 97
-        r = -1 * int(move[1]) + 3
-        return r, c
+        return c
 
     def take_turn( self, player, move, is_logging ):
         if not self.is_valid_move( move ): return -1
-        r, c = self.parse_move( move )
+        c = self.parse_move( move )
+        col_reverse = board_col(self.board, c).reverse()
+        r = next
         self.board[r][c] = player.piece
 
         if is_logging: self.move_history += [f"{player.piece}{move}"]
@@ -99,33 +102,6 @@ class Game:
         return self.winner
 
 
-class RandomPlayer:
-    def __init__( self ):
-        self.piece = ''
-
-    def choose_move( self, game ):
-        valid_moves = game.valid_moves
-        random_idx = int(rand() * len(valid_moves))
-        # print(f"  valid_moves[{random_idx}] {valid_moves}")
-        return valid_moves[random_idx]
-
-
-class ManualPlayer:
-    def __init__( self ):
-        self.piece = ''
-
-    def choose_move( self, game ):
-        game.print_board()
-        valid_moves = game.valid_moves
-        print(f"  Valid Moves: {valid_moves}")
-        move = input(f"  Input Move eg. \"{valid_moves[int(rand() * len(valid_moves))]}\" -->")
-        # input validation
-        if len(move) < 2: 
-            return 0
-        move = move.strip().upper()[0:2]
-        print(f"  human move:{move}")
-        return move
-
 
 class Player:
     def __init__( self, strategy_func ):
@@ -144,12 +120,10 @@ def print_board( board ):
     print("   A   B   C")
 
 def possible_moves( board ):
-    col_ids = ['A', 'B', 'C']
-    row_ids = ['3', '2', '1']
+    col_ids = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
     valid_indices = []
-    for row_id, row in zip(row_ids, board):
-        for col_id, cell in zip(col_ids, row):
-            if cell == ' ': valid_indices += [f"{col_id}{row_id}"]
+    for col_id, cell in zip(col_ids, board[0]):
+        if cell == '∙': valid_indices += [f"{col_id}"]
 
     # print(f"  valid_moves:{valid_indices}")
     return valid_indices
@@ -157,9 +131,9 @@ def possible_moves( board ):
 def random_moves_strat( board, piece ):
     valid_moves = possible_moves(board)
     random_idx = int(rand() * len(valid_moves))
-    # print(f"  valid_moves[{random_idx}] {valid_moves}")
+    print(f"  {piece} {valid_moves[random_idx]} valid_moves:{valid_moves}")
     return valid_moves[random_idx]
-
+""" 
 def manual_moves_strat( board, piece ):
     print_board(board)
     valid_moves = possible_moves(board)
@@ -200,9 +174,9 @@ def custom_strat( board, piece ):
     for line in win_lines:
         a, b, c = (board[r][c] for r, c in line)
         vals = [a, b, c]
-        if vals.count(piece) == 2 and vals.count(' ') == 1:
+        if vals.count(piece) == 2 and vals.count('∙') == 1:
             # winner found! return the empty cell
-            move = [[r, c] for r, c, in line if board[r][c] == ' ']
+            move = [[r, c] for r, c, in line if board[r][c] == '∙']
             grid_location = parse_indices(move[0])
             return grid_location
     # fill corners
@@ -216,72 +190,54 @@ def custom_strat( board, piece ):
         return valid_moves[int(rand() * len(valid_moves))]
 
     return "Z0"
+ """
 
-def custom_strat2( board, piece ):
-    win_lines = [   [(0,0), (0,1), (0,2)],
-                    [(1,0), (1,1), (1,2)],
-                    [(2,0), (2,1), (2,2)],
-                    [(0,0), (1,0), (2,0)],
-                    [(0,1), (1,1), (2,1)],
-                    [(0,2), (1,2), (2,2)],
-                    [(0,0), (1,1), (2,2)],
-                    [(0,2), (1,1), (2,0)]]
-    # check win lines for two-in-a-rows
-    for line in win_lines:
-        a, b, c = (board[r][c] for r, c in line)
-        vals = [a, b, c]
-        if vals.count(piece) == 2 and vals.count(' ') == 1:
-            # winner found! return the empty cell
-            move = [[r, c] for r, c, in line if board[r][c] == ' ']
-            grid_location = parse_indices(move[0])
-            return grid_location
+player1 = Player(random_moves_strat)
+player2 = Player(random_moves_strat)
+game = Game(player1, player2)
+game.run(False)
+game.print_board()
+""" 
+# strategies = [random_moves_strat]
+# strat_combos = [[p1, p2] for p1 in strategies for p2 in strategies]
 
-    # then pick random squares
-    valid_moves = possible_moves(board)
-    if valid_moves: 
-        return valid_moves[int(rand() * len(valid_moves))]
+# table_width = 80
+# col_width = int(table_width / 8)
+# strat_width = 20
+# print(f"X wins".center(col_width) + 
+#       f"O wins".center(col_width) + 
+#       f"Total Wins".center(col_width) + 
+#       f"X wr".center(col_width) + 
+#       f"O wr".center(col_width) + 
+#       f"N".center(col_width) + 
+#       f"X strat".ljust(strat_width) + 
+#       f"O strat")
+# print("".center(table_width + strat_width, '‾'))
+# stats = []
 
-    return "Z0"
+# for combo in strat_combos:
+#     N = 100
+#     x_wins = 0
+#     o_wins = 0
+#     for n in range(N):
+#         player1 = Player(combo[0])
+#         player2 = Player(combo[1])
+#         game = Game(player1, player2)
+#         winner = game.run(False)
+#         if winner == 'X':
+#             x_wins += 1
+#         elif winner == 'O':
+#             o_wins += 1
 
-strategies = [random_moves_strat, custom_strat, custom_strat2]
-strat_combos = [[p1, p2] for p1 in strategies for p2 in strategies]
+#     total_wins = x_wins + o_wins
+#     stats += [f"{x_wins}".center(col_width) +
+#               f"{o_wins}".center(col_width) + 
+#               f"{total_wins}".center(col_width) + 
+#               f"{x_wins/(total_wins):.3f}".center(col_width) +
+#               f"{o_wins/(total_wins):.3f}".center(col_width) + 
+#               f"{N}".center(col_width) +
+#               f"{combo[0].__name__}".ljust(strat_width) + 
+#               f"{combo[1].__name__}"]
 
-table_width = 80
-col_width = int(table_width / 8)
-strat_width = 20
-print(f"X wins".center(col_width) + 
-      f"O wins".center(col_width) + 
-      f"Total Wins".center(col_width) + 
-      f"X wr".center(col_width) + 
-      f"O wr".center(col_width) + 
-      f"N".center(col_width) + 
-      f"X strat".ljust(strat_width) + 
-      f"O strat")
-print("".center(table_width + strat_width, '‾'))
-stats = []
-
-for combo in strat_combos:
-    N = 100
-    x_wins = 0
-    o_wins = 0
-    for n in range(N):
-        player1 = Player(combo[0])
-        player2 = Player(combo[1])
-        game = Game(player1, player2)
-        winner = game.run(False)
-        if winner == 'X':
-            x_wins += 1
-        elif winner == 'O':
-            o_wins += 1
-
-    total_wins = x_wins + o_wins
-    stats += [f"{x_wins}".center(col_width) +
-              f"{o_wins}".center(col_width) + 
-              f"{total_wins}".center(col_width) + 
-              f"{x_wins/(total_wins):.3f}".center(col_width) +
-              f"{o_wins/(total_wins):.3f}".center(col_width) + 
-              f"{N}".center(col_width) +
-              f"{combo[0].__name__}".ljust(strat_width) + 
-              f"{combo[1].__name__}"]
-
-for s in stats: print(s)
+# for s in stats: print(s)
+ """

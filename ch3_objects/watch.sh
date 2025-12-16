@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-while fswatch -1 ch3_4_tictactoe.py; do
+while fswatch -1 ch3_4_connectfour.py; do
     clear
-    python ch3_4_tictactoe.py
+    python ch3_4_connectfour.py
 done
