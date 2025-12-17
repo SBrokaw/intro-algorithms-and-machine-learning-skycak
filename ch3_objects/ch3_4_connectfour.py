@@ -21,8 +21,24 @@ class Game:
         print("   ‾‾‾‾‾‾‾‾‾‾‾‾‾")
         print(f"   A B C D E F G")
 
-    def board_col( self, board, c ):
-        return [r[c] for r in board]
+    def board_col( self, c ):
+        return [r[c] for r in self.board]
+
+    def board_diag( self, r, c, m ):
+        diag = [self.board[r][c]]
+        dirs = [(1, m * -1), (-1, m * 1)]
+        for dir_c, dir_r in dirs:
+            for k in range(1, 7):
+                cc = c + dir_c * k
+                rr = r + dir_r * k
+                if cc >= len(self.board[0]) or cc < 0 or rr >= len(self.board) or rr < 0:
+                    break
+                if dir_c > 0:
+                    diag += [self.board[rr][cc]]
+                elif dir_c < 0:
+                    diag = [self.board[rr][cc]] + diag
+
+        return diag
 
     def is_valid_move( self, m ):
         return True if m in self.valid_moves else False
@@ -37,24 +53,36 @@ class Game:
         # print(f"  valid_moves:{valid_indices}")
         return valid_indices
 
+    def count_consecutive(self, piece, row):
+        count = 0
+        num_in_a_row = 0
+        for r in row:
+            num_in_a_row = max(count, num_in_a_row)
+            if r == piece: count += 1
+            else: count = 0
+
+        return num_in_a_row
+
     def check_win_from(self, r, c):
         piece = self.board[r][c]
-        num_in_a_row = 0
         if piece == '∙': 
             return False
-        for dir_r, dir_c in self.WIN_DIRECTIONS:
-            for k in range(4):
-                rr = r + dir_r * k
-                cc = c + dir_c * k
-                if rr >= len(self.board) or rr < 0 or cc >= len(self.board[0]) or cc < 0:
-                    break
-                if self.board[rr][cc] != piece:
-                    break
-                num_in_a_row += 1 if self.board[rr][cc] == piece else 0
+        check_row = self.board[r]
+        check_col = self.board_col(c)
+        check_diag1 = self.board_diag(r, c, 1)
+        check_diag2 = self.board_diag(r, c, -1)
+        checks = [check_row, check_col, check_diag1, check_diag2]
+        print(f"  check_win:{piece} [{r},{c}]")
+        for check in checks:
+            num_in_a_row = self.count_consecutive(piece, check)
+            print(f"    {check} ".ljust(50) + f"{num_in_a_row}", end='')
             if num_in_a_row == 4:
                 self.winner = piece
-            
-            return self.winner
+                print(f" WINNER! {piece}")
+                return self.winner
+            print()
+        
+        return self.winner
 
 
     @property
@@ -81,15 +109,17 @@ class Game:
     def take_turn( self, player, move, is_logging ):
         if not self.is_valid_move( move ): return -1
         c = self.parse_move( move )
-        col = self.board_col(self.board, c)
+        col = self.board_col(c)
         r = col.count('∙') - 1
         self.board[r][c] = player.piece
 
-        if is_logging: self.move_history += [f"{player.piece}{move}"]
+        if is_logging: 
+            self.move_history += [f"{player.piece}{move}"]
+
         self.winner = self.check_win_from(r, c)
 
         # print(f"  history:", self.move_history, move, r, c)
-        self.print_board()
+        # self.print_board()
         return 0
 
     def run( self, is_logging ):
@@ -139,19 +169,19 @@ def possible_moves( board ):
 def random_moves_strat( board, piece ):
     valid_moves = possible_moves(board)
     random_idx = int(rand() * len(valid_moves))
-    print(f"  {piece} {valid_moves[random_idx]} valid_moves:{valid_moves}")
+    # print(f"  {piece} {valid_moves[random_idx]} valid_moves:{valid_moves}")
     return valid_moves[random_idx]
-""" 
+
 def manual_moves_strat( board, piece ):
     print_board(board)
     valid_moves = possible_moves(board)
     print(f"  Valid Moves: {valid_moves}")
-    move = input(f"  Input Move eg. \"{valid_moves[int(rand() * len(valid_moves))]}\" -->")
+    move = input(f"  Input Move, {piece} Player eg. \"{valid_moves[int(rand() * len(valid_moves))]}\" -->")
     # input validation
-    if len(move) < 2: 
+    if len(move) < 1: 
         return 0
-    move = move.strip().upper()[0:2]
-    print(f"  human move:{move}")
+    move = move.strip().upper()[0:1]
+    print(f"  human move:{piece} {move}")
     return move
 
 def cheater_strat( board, piece ):
@@ -198,13 +228,19 @@ def custom_strat( board, piece ):
         return valid_moves[int(rand() * len(valid_moves))]
 
     return "Z0"
- """
 
 player1 = Player(random_moves_strat)
 player2 = Player(random_moves_strat)
 game = Game(player1, player2)
 game.run(True)
 game.print_board()
+
+player1 = Player(manual_moves_strat)
+player2 = Player(random_moves_strat)
+game = Game(player1, player2)
+game.run(True)
+game.print_board()
+
 """ 
 # strategies = [random_moves_strat]
 # strat_combos = [[p1, p2] for p1 in strategies for p2 in strategies]
