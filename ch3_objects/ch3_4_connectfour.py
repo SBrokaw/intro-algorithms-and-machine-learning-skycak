@@ -7,19 +7,10 @@ class Game:
     def __init__(self, player1, player2):
         self.board = [['∙' for _ in range(7)] for _ in range(6)]
         self.move_history = [] # array of moves for this game (ex. ["XA0", "OA1", "XB1", "OB0", "XC3"])
-        self.winner = "No player"
+        self.winner = "Nobody"
         player1.piece = 'X'
         player2.piece = 'O'
-        self.WIN_LINES = [  [(0,0), (0,1), (0,2)],
-                            [(1,0), (1,1), (1,2)],
-                            [(2,0), (2,1), (2,2)],
-                            [(0,0), (1,0), (2,0)],
-                            [(0,1), (1,1), (2,1)],
-                            [(0,2), (1,2), (2,2)],
-                            [(0,0), (1,1), (2,2)],
-                            [(0,2), (1,1), (2,0)]]
-
-        # self.print_board()
+        self.WIN_DIRECTIONS = [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]
 
     def print_board(self):
         for r_idx, row in enumerate(self.board):
@@ -30,7 +21,7 @@ class Game:
         print("   ‾‾‾‾‾‾‾‾‾‾‾‾‾")
         print(f"   A B C D E F G")
 
-    def board_col( board, c ):
+    def board_col( self, board, c ):
         return [r[c] for r in board]
 
     def is_valid_move( self, m ):
@@ -46,6 +37,26 @@ class Game:
         # print(f"  valid_moves:{valid_indices}")
         return valid_indices
 
+    def check_win_from(self, r, c):
+        piece = self.board[r][c]
+        num_in_a_row = 0
+        if piece == '∙': 
+            return False
+        for dir_r, dir_c in self.WIN_DIRECTIONS:
+            for k in range(4):
+                rr = r + dir_r * k
+                cc = c + dir_c * k
+                if rr >= len(self.board) or rr < 0 or cc >= len(self.board[0]) or cc < 0:
+                    break
+                if self.board[rr][cc] != piece:
+                    break
+                num_in_a_row += 1 if self.board[rr][cc] == piece else 0
+            if num_in_a_row == 4:
+                self.winner = piece
+            
+            return self.winner
+
+
     @property
     def is_playing(self):
         # check if no more valid moves
@@ -53,15 +64,10 @@ class Game:
             self.winner = "Nobody"
             return False
 
-        # check all combinations to see if there is any winner
-        # for line in self.WIN_LINES:
-        #     a, b, c, d = (self.board[r][c] for r, c in line)
-        #     if (a == b == c) and a != '∙': 
-        #         # print(f"  win! {line} a:{a} b:{b} c:{c}")
-        #         self.winner = a
-        #         return False # win line found!
-
-        return True # no winners
+        if self.winner == "Nobody":
+            return True
+        else:
+            return False
 
     @property
     def is_gameover(self):
@@ -75,14 +81,15 @@ class Game:
     def take_turn( self, player, move, is_logging ):
         if not self.is_valid_move( move ): return -1
         c = self.parse_move( move )
-        col_reverse = board_col(self.board, c).reverse()
-        r = next
+        col = self.board_col(self.board, c)
+        r = col.count('∙') - 1
         self.board[r][c] = player.piece
 
         if is_logging: self.move_history += [f"{player.piece}{move}"]
+        self.winner = self.check_win_from(r, c)
 
         # print(f"  history:", self.move_history, move, r, c)
-        # self.print_board()
+        self.print_board()
         return 0
 
     def run( self, is_logging ):
@@ -112,12 +119,13 @@ class Player:
         return self.strategy_func( board, self.piece )
 
 def print_board( board ):
-    print(f"3  {board[0][0]} | {board[0][1]} | {board[0][2]}") 
-    print("  ———+———+———")
-    print(f"2  {board[1][0]} | {board[1][1]} | {board[1][2]}")  
-    print("  ———+———+———")
-    print(f"1  {board[2][0]} | {board[2][1]} | {board[2][2]}")  
-    print("   A   B   C")
+    for r_idx, row in enumerate(board):
+        print(f"{len(board) - r_idx} |", end='')
+        for cell in row:
+            print(f"{cell} ", end='')
+        print()
+    print("   ‾‾‾‾‾‾‾‾‾‾‾‾‾")
+    print(f"   A B C D E F G")
 
 def possible_moves( board ):
     col_ids = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
@@ -195,7 +203,7 @@ def custom_strat( board, piece ):
 player1 = Player(random_moves_strat)
 player2 = Player(random_moves_strat)
 game = Game(player1, player2)
-game.run(False)
+game.run(True)
 game.print_board()
 """ 
 # strategies = [random_moves_strat]
