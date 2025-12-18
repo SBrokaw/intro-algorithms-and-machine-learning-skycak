@@ -72,15 +72,15 @@ class Game:
         check_diag1 = self.board_diag(r, c, 1)
         check_diag2 = self.board_diag(r, c, -1)
         checks = [check_row, check_col, check_diag1, check_diag2]
-        print(f"  check_win:{piece} [{r},{c}]")
+        # print(f"  check_win:{piece} [{r},{c}]")
         for check in checks:
             num_in_a_row = self.count_consecutive(piece, check)
             print(f"    {check} ".ljust(50) + f"{num_in_a_row}", end='')
             if num_in_a_row == 4:
                 self.winner = piece
-                print(f" WINNER! {piece}")
+                # print(f" WINNER! {piece}")
                 return self.winner
-            print()
+            # print()
         
         return self.winner
 
