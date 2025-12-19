@@ -75,7 +75,7 @@ class Game:
         # print(f"  check_win:{piece} [{r},{c}]")
         for check in checks:
             num_in_a_row = self.count_consecutive(piece, check)
-            print(f"    {check} ".ljust(50) + f"{num_in_a_row}", end='')
+            # print(f"    {check} ".ljust(50) + f"{num_in_a_row}", end='')
             if num_in_a_row == 4:
                 self.winner = piece
                 # print(f" WINNER! {piece}")
@@ -185,7 +185,7 @@ def manual_moves_strat( board, piece ):
     return move
 
 def cheater_strat( board, piece ):
-    board = [['O' for _ in range(3)] for _ in range(3)]
+    board = [['O' for _ in range(4)] for _ in range(4)]
     return "A1"
 
 def possible_corners( board ):
@@ -199,89 +199,132 @@ def parse_indices( indices ):
     row_ids = ['3', '2', '1']
     return f"{col_ids[c]}{row_ids[r]}"
 
-def custom_strat( board, piece ):
-    win_lines = [   [(0,0), (0,1), (0,2)],
-                    [(1,0), (1,1), (1,2)],
-                    [(2,0), (2,1), (2,2)],
-                    [(0,0), (1,0), (2,0)],
-                    [(0,1), (1,1), (2,1)],
-                    [(0,2), (1,2), (2,2)],
-                    [(0,0), (1,1), (2,2)],
-                    [(0,2), (1,1), (2,0)]]
-    # check win lines for two-in-a-rows
-    for line in win_lines:
-        a, b, c = (board[r][c] for r, c in line)
-        vals = [a, b, c]
-        if vals.count(piece) == 2 and vals.count('∙') == 1:
-            # winner found! return the empty cell
-            move = [[r, c] for r, c, in line if board[r][c] == '∙']
-            grid_location = parse_indices(move[0])
-            return grid_location
-    # fill corners
-    valid_moves = possible_corners(board)
-    if valid_moves: 
-        return valid_moves[int(rand() * len(valid_moves))]
+def count_consecutive(piece, row):
+        count = 0
+        num_in_a_row = 0
+        for r in row:
+            num_in_a_row = max(count, num_in_a_row)
+            if r == piece: count += 1
+            else: count = 0
 
-    # then pick random squares
+        return num_in_a_row
+
+def count_adjacent(piece, idx, row):
+    num_adjacent = 0
+    # count forward
+    for r in row[idx+1:]:
+        if r == piece: num_adjacent += 1
+        else: break
+    
+    # count backward
+    for r in row[idx::-1]:
+        if r == piece: num_adjacent += 1
+        else: break
+
+    return num_adjacent
+
+
+def parse_move(move):
+    return ord(move[0].lower()) - 97
+
+def board_col( board, c ):
+    return [r[c] for r in board]
+
+def board_diag(board, r, c, m):
+    return []
+
+def rc_from_move(board, move):
+    c = parse_move(move)
+    col = board_col(board, c)
+    r = col.count('∙') - 1
+
+    return r, c
+
+def rank_connectfour_move(piece, board, move):
+    r, c = rc_from_move(board, move)
+    check_row = board[r]
+    check_col = board_col(board, c)
+    # check_diag1 = board_diag(board, r, c, 1)
+    # check_diag2 = board_diag(board, r, c, -1)
+    checks = [[check_row, c], [check_col, r]] #, check_diag1 : 0, check_diag2 : 0}
+    # print(f"  check_win:{piece} [{r},{c}]")
+    num_adjacent = 0
+    for check, idx in checks:
+        num_adjacent += count_adjacent(piece, idx, check)
+        # print(f"    {check} ".ljust(50) + f"{num_in_a_row}", end='')
+        if num_adjacent == 3:
+            return 99
+
+    return num_adjacent
+
+
+def custom_strat( board, piece ):
+    valid_moves = {v : 0 for v in possible_moves(board)}
+    # rank potential moves
+    for potential_move in valid_moves:
+        valid_moves[potential_move] = rank_connectfour_move(piece, board, potential_move)
+    # pick highest rank move
+
+    # else pick random squares
     valid_moves = possible_moves(board)
     if valid_moves: 
         return valid_moves[int(rand() * len(valid_moves))]
 
     return "Z0"
 
+""" 
 player1 = Player(random_moves_strat)
 player2 = Player(random_moves_strat)
 game = Game(player1, player2)
-game.run(True)
+game.run(False)
 game.print_board()
 
 player1 = Player(manual_moves_strat)
 player2 = Player(random_moves_strat)
 game = Game(player1, player2)
-game.run(True)
+game.run(False)
 game.print_board()
+"""
 
-""" 
-# strategies = [random_moves_strat]
-# strat_combos = [[p1, p2] for p1 in strategies for p2 in strategies]
+strategies = [random_moves_strat, custom_strat]
+strat_combos = [[p1, p2] for p1 in strategies for p2 in strategies]
 
-# table_width = 80
-# col_width = int(table_width / 8)
-# strat_width = 20
-# print(f"X wins".center(col_width) + 
-#       f"O wins".center(col_width) + 
-#       f"Total Wins".center(col_width) + 
-#       f"X wr".center(col_width) + 
-#       f"O wr".center(col_width) + 
-#       f"N".center(col_width) + 
-#       f"X strat".ljust(strat_width) + 
-#       f"O strat")
-# print("".center(table_width + strat_width, '‾'))
-# stats = []
+table_width = 80
+col_width = int(table_width / 8)
+strat_width = 20
+print(f"X wins".center(col_width) + 
+      f"O wins".center(col_width) + 
+      f"Total Wins".center(col_width) + 
+      f"X wr".center(col_width) + 
+      f"O wr".center(col_width) + 
+      f"N".center(col_width) + 
+      f"X strat".ljust(strat_width) + 
+      f"O strat")
+print("".center(table_width + strat_width, '‾'))
+stats = []
 
-# for combo in strat_combos:
-#     N = 100
-#     x_wins = 0
-#     o_wins = 0
-#     for n in range(N):
-#         player1 = Player(combo[0])
-#         player2 = Player(combo[1])
-#         game = Game(player1, player2)
-#         winner = game.run(False)
-#         if winner == 'X':
-#             x_wins += 1
-#         elif winner == 'O':
-#             o_wins += 1
+for combo in strat_combos:
+    N = 100
+    x_wins = 0
+    o_wins = 0
+    for n in range(N):
+        player1 = Player(combo[0])
+        player2 = Player(combo[1])
+        game = Game(player1, player2)
+        winner = game.run(False)
+        if winner == 'X':
+            x_wins += 1
+        elif winner == 'O':
+            o_wins += 1
 
-#     total_wins = x_wins + o_wins
-#     stats += [f"{x_wins}".center(col_width) +
-#               f"{o_wins}".center(col_width) + 
-#               f"{total_wins}".center(col_width) + 
-#               f"{x_wins/(total_wins):.3f}".center(col_width) +
-#               f"{o_wins/(total_wins):.3f}".center(col_width) + 
-#               f"{N}".center(col_width) +
-#               f"{combo[0].__name__}".ljust(strat_width) + 
-#               f"{combo[1].__name__}"]
+    total_wins = x_wins + o_wins
+    stats += [f"{x_wins}".center(col_width) +
+              f"{o_wins}".center(col_width) + 
+              f"{total_wins}".center(col_width) + 
+              f"{x_wins/(total_wins):.3f}".center(col_width) +
+              f"{o_wins/(total_wins):.3f}".center(col_width) + 
+              f"{N}".center(col_width) +
+              f"{combo[0].__name__}".ljust(strat_width) + 
+              f"{combo[1].__name__}"]
 
-# for s in stats: print(s)
- """
+for s in stats: print(s)
