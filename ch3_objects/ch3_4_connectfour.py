@@ -264,27 +264,16 @@ def custom_strat( board, piece ):
     for potential_move in valid_moves:
         valid_moves[potential_move] = rank_connectfour_move(piece, board, potential_move)
     # pick highest rank move
+    random_idx = int(rand() * len(list(valid_moves)))
+    highest_rank_move = list(valid_moves)[random_idx]
+    rank = 0
+    for m in valid_moves:
+        if valid_moves[m] > rank: 
+            highest_rank_move = m
+            rank = valid_moves[m]
+    
+    return highest_rank_move
 
-    # else pick random squares
-    valid_moves = possible_moves(board)
-    if valid_moves: 
-        return valid_moves[int(rand() * len(valid_moves))]
-
-    return "Z0"
-
-""" 
-player1 = Player(random_moves_strat)
-player2 = Player(random_moves_strat)
-game = Game(player1, player2)
-game.run(False)
-game.print_board()
-
-player1 = Player(manual_moves_strat)
-player2 = Player(random_moves_strat)
-game = Game(player1, player2)
-game.run(False)
-game.print_board()
-"""
 
 strategies = [random_moves_strat, custom_strat]
 strat_combos = [[p1, p2] for p1 in strategies for p2 in strategies]
