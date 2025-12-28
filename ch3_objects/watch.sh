@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-local script="ch3_6_SIR_model.py"
+local script="ch3_7_hodgkin_huxley.py"
 
 while fswatch -1 $script; do
     clear
