@@ -1,6 +1,8 @@
 #!/usr/bin/env zsh
 
-while fswatch -1 ch3_5_euler_estimation.py; do
+local script="ch3_6_SIR_model.py"
+
+while fswatch -1 $script; do
     clear
-    python ch3_5_euler_estimation.py
+    python $script
 done

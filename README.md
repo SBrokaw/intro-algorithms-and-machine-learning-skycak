@@ -46,3 +46,5 @@ Skycak, J. (2021). Tic-Tac-Toe and Connect Four. In Introduction to Algorithms a
 
 Skycak, J. (2021). Euler Estimation. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/euler-estimation/
 
+Skycak, J. (2021). SIR Model For the Spread of Disease. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/sir-model-for-the-spread-of-disease/
+
