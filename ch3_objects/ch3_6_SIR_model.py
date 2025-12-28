@@ -37,8 +37,8 @@ class EulerEstimatorMultivariable():
         points = [(t, p)]
         for i in range(n):
             a += dt * self.eval_derivative('S', t, p)
-            b = min(0, abs(b + (dt * self.eval_derivative('I', t, p)) - c))
-            c += dt * self.eval_derivative('R', t, p)
+            b += dt * (self.eval_derivative('I', t, p) - self.eval_derivative('R', t, p))
+            c += dt * self.eval_derivative('R', t, p)  
             t += dt 
             p = {'S':a, 'I':b, 'R':c}
             points += [(t, p)]
@@ -51,14 +51,14 @@ def dS_dt(t, p):
     return -1 * dI_dt(t, p)
 
 def dI_dt(t, p):
-    return 0.01 * p["S"] * p["I"] * 0.03 - dR_dt(t, p)
+    return 0.01 * p["S"] * p["I"] * 0.03
 
 def dR_dt(t, p):
     return 0.02 * p["I"]
 
 
 p0 = (0, {'S': 1000, 'I': 1, 'R': 0})
-dt = 3
+dt = 5
 n = int((365) / dt)
 derivatives = {'S': dS_dt, 'I': dI_dt, 'R': dR_dt}
 euler_mv = EulerEstimatorMultivariable(derivatives)
@@ -69,12 +69,12 @@ print(f"{[euler_mv.derivatives[key].__name__ for key in derivatives]}".center(40
 
 plt.figure()
 tss = [p[0] for p in points]
-Sss = [p[1]["S"] for p in points]
-Iss = [p[1]["I"] for p in points]
-Rss = [p[1]["R"] for p in points]
-plt.plot(tss, Sss, label="Susceptible")
-plt.plot(tss, Iss, label="Infected")
-plt.plot(tss, Rss, label="Recovered")
+Sss = [int(p[1]["S"]) for p in points]
+Iss = [int(p[1]["I"]) for p in points]
+Rss = [int(p[1]["R"]) for p in points]
+plt.semilogx(tss, Sss, label="Susceptible")
+plt.semilogx(tss, Iss, label="Infected")
+plt.semilogx(tss, Rss, label="Recovered")
 
 plt.title("SIR Infection Model -- Problem CH3_6")
 plt.xlabel("time (days)")
