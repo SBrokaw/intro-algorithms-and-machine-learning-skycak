@@ -50,3 +50,4 @@ Skycak, J. (2021). SIR Model For the Spread of Disease. In Introduction to Algor
 
 Skycak, J. (2021). Hodgkin-Huxley Model of Action Potentials in Neurons. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/hodgkin-huxley-model-of-action-potentials-in-neurons/
 
+Skycak, J. (2021). Hash Tables. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/hash-tables/
