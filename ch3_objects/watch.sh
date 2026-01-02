@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-local script="ch3_7_hodgkin_huxley.py"
+local script="ch3_8_hash_tables.py"
 
 while fswatch -1 $script; do
     clear
