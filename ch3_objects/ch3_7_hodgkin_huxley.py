@@ -79,7 +79,7 @@ def alpha_n(V):
     return 0.01 * (10 - V) / (exp(0.1 * (10 - V)) - 1)
 
 def alpha_m(V):
-    return 0.01 * (25 - V) / (exp(0.1 * (25 - V)) - 1)
+    return 0.1 * (25 - V) / (exp(0.1 * (25 - V)) - 1)
 
 def alpha_h(V):
     return 0.07 * exp(-1 * V / 20)
@@ -110,8 +110,8 @@ n_0 = alpha_n(V_0) / (alpha_n(V_0) + Beta_n(V_0))
 m_0 = alpha_m(V_0) / (alpha_m(V_0) + Beta_m(V_0))
 h_0 = alpha_h(V_0) / (alpha_h(V_0) + Beta_h(V_0))
 p0 = (0, {'V': V_0, 'n': n_0, 'm': m_0, 'h': h_0})
-dt = 0.005
-n = int((19) / dt) # t ∈ [0, 80 ms]
+dt = 0.05
+n = int((80) / dt) # t ∈ [0, 80 ms]
 derivatives = {'V': dV_dt, 'n': dn_dt, 'm': dm_dt, 'h': dh_dt}
 euler_mv = EulerEstimatorMultivariable(derivatives)
 points = euler_mv.estimate_points(p0, dt, n)
@@ -129,7 +129,7 @@ mss = [p[1]["m"] for p in points]
 hss = [p[1]["h"] for p in points]
 
 plt1.plot(tss, sss, label="Stimulus")
-plt1.plot(tss, Vss, label="Membrance Potential")
+plt1.plot(tss, Vss, label="Membrane Potential")
 plt1.legend()
 plt1.grid(True)
 plt1.set_title("Hodgkin-Huxley Neuron Action Potential Model -- CH3_7")
