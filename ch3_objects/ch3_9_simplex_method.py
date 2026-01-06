@@ -16,13 +16,19 @@ class SimplexSolver():
         self.objective = self.table[0][-1]
 
     def print_table(self):
-        col_width = 5
-        print(f"    basic variables : slack variables")
-        print(f"      x_1  x_2  x_3  x_4  x_5  x_6 | constant")
+        col_width = 6
+        # header
+        print(f"     ", end='')
+        for col in ["x_" + str(n+1) for n in range(len(self.table[0]) - 1)]:
+            print(f"{col:3s}".center(col_width), end='')
+        print(f" constant")
+
+        # maximize row
         print(f"max ", end='')
         for c in self.table[0]:
             print(f"{c: 2g}".center(col_width), end='')
         print()
+        # constraints rows
         for constraint in self.table[1:]:
             print(f"con ", end='')
             for c in constraint:
@@ -32,27 +38,42 @@ class SimplexSolver():
         return 0
 
     def solve(self):
-        # while max(self.table[0]) > 0:
-        max_slope = self.table[0].index(max(self.table[0]))
-        constraints = [constraint_eq[-1] / constraint_eq[max_slope] for constraint_eq in self.table[1:]]
-        most_limiting = constraints.index(min(constraints)) + 1
-        scalar = self.table[most_limiting][max_slope]
-        self.table[most_limiting] = [v / scalar for v in self.table[most_limiting]]
+        while max(self.table[0]) > 0:
+            max_slope = self.table[0].index(max(self.table[0]))
+            constraints_raw = [constraint_eq[-1] / constraint_eq[max_slope] for constraint_eq in self.table[1:]]
+            constraints = [v for v in constraints_raw if v > 0]
+            most_limiting = constraints_raw.index(min(constraints)) + 1 # index of most limiting constraint
+            scalar = self.table[most_limiting][max_slope]
+            self.table[most_limiting] = [v / scalar for v in self.table[most_limiting]]
 
-        rows_to_reduce = [i for i in range(len(self.table)) if i != most_limiting]
-        print(f"  rows_to_reduce = {rows_to_reduce}")
+            rows_to_reduce = [i for i in range(len(self.table)) if i != most_limiting]
+            for i in rows_to_reduce:
+                k = -1 * self.table[i][max_slope] / self.table[most_limiting][max_slope]
+                self.table[i] = [self.table[i][j] + k * self.table[most_limiting][j] for j in range(len(self.table[i]))]
 
-        return self.objective
+            self.print_table()
+
+        return abs(self.table[0][-1])
 
 
-array = [[1, 2, 1, 0, 0, 0, 0],
-         [2, 1, 1, 1, 0, 0, 14],
-         [4, 2, 3, 0, 1, 0, 28],
-         [2, 5, 5, 0, 0, 1, 30]]
-simplex = SimplexSolver(array)
-simplex.print_table()
-print()
+problems = [[[1, 2, 1, 0, 0, 0, 0],  # maximize
+             [2, 1, 1, 1, 0, 0, 14], # constraint1
+             [4, 2, 3, 0, 1, 0, 28], # constraint2
+             [2, 5, 5, 0, 0, 1, 30]]#,# constraint3
+            # [[20, 10, 15, 0, 0, 0, 0, 0], # maximize
+            #  [3, 2, 5, 1, 0, 0, 0, 55], # constraint1
+            #  [2, 1, 1, 0, 1, 0, 0, 26], # constraint2
+            #  [1, 1, 3, 0, 0, 1, 0, 30], # constraint3
+            #  [5, 2, 4, 0, 0, 0, 1, 57]] # constraint4
+           ]
+for array in problems:
+    print(f" Starting Table ".center(50, '—'))
+    print(f"".center(50, '‾'))
+    simplex = SimplexSolver(array)
+    simplex.print_table()
+    print()
 
-objective = simplex.solve()
-simplex.print_table()
-print(f"  Maximization = {objective}")
+    objective = simplex.solve()
+    print(f" Final Table ".center(50, '—'))
+    simplex.print_table()
+    print(f"  Maximization = {objective}")
