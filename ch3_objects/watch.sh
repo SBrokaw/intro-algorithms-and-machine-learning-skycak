@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-local script="ch3_8_hash_tables.py"
+local script="ch3_9_simplex_method.py"
 
 while fswatch -1 $script; do
     clear
