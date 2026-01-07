@@ -38,7 +38,7 @@ class SimplexSolver():
         return 0
 
     def solve(self):
-        while max(self.table[0]) > 0:
+        for loop in range(5): # while max(self.table[0][:-1]) > 0:
             max_slope = self.table[0].index(max(self.table[0]))
             constraints_raw = [constraint_eq[-1] / constraint_eq[max_slope] for constraint_eq in self.table[1:]]
             constraints = [v for v in constraints_raw if v > 0]
@@ -52,28 +52,32 @@ class SimplexSolver():
                 self.table[i] = [self.table[i][j] + k * self.table[most_limiting][j] for j in range(len(self.table[i]))]
 
             self.print_table()
+            if max(self.table[0][:-1]) <= 0: 
+                break
 
         return abs(self.table[0][-1])
 
 
+table_width = 50
 problems = [[[1, 2, 1, 0, 0, 0, 0],  # maximize
              [2, 1, 1, 1, 0, 0, 14], # constraint1
              [4, 2, 3, 0, 1, 0, 28], # constraint2
-             [2, 5, 5, 0, 0, 1, 30]]#,# constraint3
-            # [[20, 10, 15, 0, 0, 0, 0, 0], # maximize
-            #  [3, 2, 5, 1, 0, 0, 0, 55], # constraint1
-            #  [2, 1, 1, 0, 1, 0, 0, 26], # constraint2
-            #  [1, 1, 3, 0, 0, 1, 0, 30], # constraint3
-            #  [5, 2, 4, 0, 0, 0, 1, 57]] # constraint4
+             [2, 5, 5, 0, 0, 1, 30]], # constraint3
+            [[20, 10, 15, 0, 0, 0, 0, 0], # maximize
+             [3, 2, 5, 1, 0, 0, 0, 55], # constraint1
+             [2, 1, 1, 0, 1, 0, 0, 26], # constraint2
+             [1, 1, 3, 0, 0, 1, 0, 30], # constraint3
+             [5, 2, 4, 0, 0, 0, 1, 57]] # constraint4
            ]
-for array in problems:
-    print(f" Starting Table ".center(50, '—'))
-    print(f"".center(50, '‾'))
+for problem_no, array in enumerate(problems):
+    print(f" Starting Table {problem_no} ".center(table_width, '—'))
+    print(f"".center(table_width, '‾'))
     simplex = SimplexSolver(array)
     simplex.print_table()
     print()
 
     objective = simplex.solve()
-    print(f" Final Table ".center(50, '—'))
+    print(f" Final Table ".center(table_width, '—'))
     simplex.print_table()
-    print(f"  Maximization = {objective}")
+    print(f"Maximization = {objective}".center(table_width))
+    print(f"".center(table_width, '‾'))
