@@ -3,6 +3,9 @@
 # from Sorting to Strategic Agents. 
 # https://justinmath.com/linear-polynomial-and-multiple-linear-regression-via-pseudoinverse/
 
+import matplotlib.pyplot as plt
+import numpy as np
+
 def dot_product( arr1, arr2 ):
     if len(arr1) != len(arr2):
         print(f'ERROR! Dot product dimension mismatch. {len(arr1)} != {len(arr2)}')
@@ -26,6 +29,9 @@ class Matrix:
 
     @property
     def is_empty(self): return True if len(self.data[0]) == 0 else False
+
+    @property
+    def vals(self): return [c for r in self.data for c in r]
 
     def show(self):
         for r in self.data:
@@ -96,18 +102,18 @@ class Matrix:
 
     # Matrix Multiply returns self ∙ m
     def matrix_multiply(self, m):
-        print(f"Matrix Multiply Debug")
-        self.print()
-        print()
-        m.print()
-        print()
+        # print(f"Matrix Multiply Debug")
+        # self.print()
+        # print()
+        # m.print()
+        # print()
 
         if self.num_cols != m.num_rows:
             print(f'ERROR! Matrix multiply dimension mismatch. [{self.num_rows}, {self.num_cols}] != [{m.num_rows}, {m.num_cols}]')
             return self
 
         product = [[0.0] * m.num_cols for c in range(self.num_rows)]
-        print(f"MM Debug product:{product}")
+        # print(f"MM Debug product:{product}")
         for i in range(self.num_rows):
             for j in range(m.num_cols):
                 row = self.data[i]
@@ -203,17 +209,9 @@ class Matrix:
     def pseudoinverse(self):
         X = self
         X_T = X.transpose()
-        print("X_T")
-        X_T.print()
         X_T_X= X_T.matrix_multiply(X)
-        print("X_T_X")
-        X_T_X.print()
         X_T_X_inv= X_T_X.inverse()
-        print("X_T_X_inv")
-        X_T_X_inv.print()
         X_T_X_inv_X_T = X_T_X_inv.matrix_multiply(X_T)
-        print("X_T_X_inv_X_T")
-        X_T_X_inv_X_T.print()
 
         return X_T_X_inv
 
@@ -234,37 +232,80 @@ table_width = 50
 # 4. Fit y=ax2+bx+c to [(−3,−4),(−2,3),(1,0),(3,−1),(4,5)].
 # 5. Fit y=ax3+bx2+cx+d to [(−3,−4),(−2,3),(1,0),(3,−1),(4,5)].
 # 6. Fit z=ax+by+c to [(−2,3,−3),(1,0,−4),(3,−1,2),(4,5,3)].
+prob_no = 1
 problems = [
-    (1, [(0,1),(2,5),(4,3)])
-    # (2, [(0,1),(2,5),(4,3),(5,0)]),
-    # (1, [(0,1,50),(2,5,30),(4,3,20),(5,0,10)])
-    # (1, [(1,0),(3,-1),(4,5)]),
-    # (1, [(-2,3),(1,0),(3,-1),(4,5)]),
-    # (2, [(-2,3),(1,0),(3,-1),(4,5)]),
-    # (2, [(-3,-4),(-2,3),(1,0),(3,-1),(4,5)]),
-    # (3, [(-3,-4),(-2,3),(1,0),(3,-1),(4,5)]),
-    # (1, [(-2,3,-3),(1,0,-4),(3,-1,2),(4,5,3)])
+    (1, [(0,1),(2,5),(4,3)]),
+    (2, [(0,1),(2,5),(4,3),(5,0)]),
+    (1, [(0,1,50),(2,5,30),(4,3,20),(5,0,10)]),
+    (1, [(1,0),(3,-1),(4,5)]),
+    (1, [(-2,3),(1,0),(3,-1),(4,5)]),
+    (2, [(-2,3),(1,0),(3,-1),(4,5)]),
+    (2, [(-3,-4),(-2,3),(1,0),(3,-1),(4,5)]),
+    (3, [(-3,-4),(-2,3),(1,0),(3,-1),(4,5)]),
+    (1, [(-2,3,-3),(1,0,-4),(3,-1,2),(4,5,3)])
 ]
 for order, data in problems:
-    print(f"order:{order} data:{data}")
+    print(f"".center(table_width, '_'))
+    print(f"order:{order} data:{data}".center(table_width, '—'))
+    print(f"".center(table_width, '='))
+    x = [list(point[:-1]) for point in data]
     y = Matrix([[point[-1]] for point in data])
-    X = coefficient_matrix(order, [list(point[:-1]) for point in data])
-    print(f"y:")
-    y.print()
-    print(f"X:")
-    X.print()
+    X = coefficient_matrix(order, x)
+    # print(f"y:")
+    # y.print()
+    # print(f"x:{x}")
+    # print(f"X:")
+    # X.print()
+    # print(f"".center(table_width, "—"))
 
     X_inv = X.pseudoinverse()
-    print(f"X_inv:")
-    X_inv.print()
+    # print(f"X_T_X_inv:")
+    # X_inv.print()
     X_T = X.transpose()
     X_T_y = X_T.matrix_multiply(y)
-    print(f"X_T_y:")
-    X_T_y.print()
+    # print(f"X_T_y:")
+    # X_T_y.print()
     p = X_inv.matrix_multiply(X_T_y)
-    print(f"".center(table_width, "—"))
     print(f"p:")
     p.print()
     print(f"".center(table_width, "—"))
 
+    # form the equation string (i.e. z ≈ 1.1x + 0.31y - 2.7)
+    regression_eq = ""
+    input_vars = ['x', 'y', 'z'][0:len(data[0]) - 1]
+    output_var = ['x', 'y', 'z'][len(data[0]) - 1]
+    regression_eq += f"{output_var} ≈ "
+    exponents = ['', '²', '³'][0:order]
+    exponents.reverse()
+    p_vals = p.vals
+    p_idx = 0
+    # print(f"p_vals:{p_vals} input vars:{input_vars} exponents:{exponents}")
+    for m in exponents:
+        for t in input_vars:
+            regression_eq += f"{p_vals[p_idx]:.2g}{t}{m} + "
+            p_idx += 1
+    regression_eq += f"{p_vals[p_idx]:.2g}"
+    regression_eq = regression_eq.replace("+ -", "– ")
+    print(f"  Regression Equation: {regression_eq}")
+
+    #plot it
+    fig = plt.figure()
+    fig.clf()
+    xs = [point[0] for point in data]
+    ys = [point[1] for point in data]
+    if len(data[0]) > 2:
+        zs = [p[2] for p in data]
+        ax = fig.add_subplot(projection="3d")
+        ax.scatter(xs, ys, zs)
+    else:
+        plt.scatter(xs, ys)
+
+    plt.title(regression_eq)
+    filename = f"ch4_1_{prob_no}_plot.png"
+    plt.savefig(filename)
+    print(f"  Plot {filename} generated.")
+
+    prob_no += 1
     print()
+
+plt.close()
