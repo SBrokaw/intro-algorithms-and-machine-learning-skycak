@@ -224,6 +224,18 @@ def coefficient_matrix( order, data ):
     # print(f"  coeffs:{coeffs}")
     return Matrix(coeffs)
 
+def compute_regression_2d(xs, cs):
+    ys = [cs[-1] for _ in range(len(xs))]
+    for i, exp in enumerate(range(len(cs) - 1, 0, -1)):
+        ys = [cs[i] + x ** exp + y for x, y in zip(xs, ys)]
+
+    return ys
+
+
+def compute_regression_3d(xs, ys, cs):
+    return [cs[0] * x + cs[1] * y + cs[2] for x, y in zip(xs, ys)]
+
+
 
 table_width = 50
 # 1. Fit y=mx+b to [(1,0),(3,−1),(4,5)].
@@ -232,7 +244,6 @@ table_width = 50
 # 4. Fit y=ax2+bx+c to [(−3,−4),(−2,3),(1,0),(3,−1),(4,5)].
 # 5. Fit y=ax3+bx2+cx+d to [(−3,−4),(−2,3),(1,0),(3,−1),(4,5)].
 # 6. Fit z=ax+by+c to [(−2,3,−3),(1,0,−4),(3,−1,2),(4,5,3)].
-prob_no = 1
 problems = [
     (1, [(0,1),(2,5),(4,3)]),
     (2, [(0,1),(2,5),(4,3),(5,0)]),
@@ -244,27 +255,21 @@ problems = [
     (3, [(-3,-4),(-2,3),(1,0),(3,-1),(4,5)]),
     (1, [(-2,3,-3),(1,0,-4),(3,-1,2),(4,5,3)])
 ]
-for order, data in problems:
+nprobs = len(problems)
+ncols = 3
+nrows = nprobs // ncols + (1 if nprobs % ncols else 0)
+fig = plt.figure(figsize=(4 * ncols, 4 * nrows))
+for i, (order, data) in enumerate(problems):
     print(f"".center(table_width, '_'))
     print(f"order:{order} data:{data}".center(table_width, '—'))
     print(f"".center(table_width, '='))
     x = [list(point[:-1]) for point in data]
     y = Matrix([[point[-1]] for point in data])
     X = coefficient_matrix(order, x)
-    # print(f"y:")
-    # y.print()
-    # print(f"x:{x}")
-    # print(f"X:")
-    # X.print()
-    # print(f"".center(table_width, "—"))
 
     X_inv = X.pseudoinverse()
-    # print(f"X_T_X_inv:")
-    # X_inv.print()
     X_T = X.transpose()
     X_T_y = X_T.matrix_multiply(y)
-    # print(f"X_T_y:")
-    # X_T_y.print()
     p = X_inv.matrix_multiply(X_T_y)
     print(f"p:")
     p.print()
@@ -278,34 +283,38 @@ for order, data in problems:
     exponents = ['', '²', '³'][0:order]
     exponents.reverse()
     p_vals = p.vals
-    p_idx = 0
-    # print(f"p_vals:{p_vals} input vars:{input_vars} exponents:{exponents}")
-    for m in exponents:
+    for p_idx, m in enumerate(exponents):
         for t in input_vars:
             regression_eq += f"{p_vals[p_idx]:.2g}{t}{m} + "
-            p_idx += 1
-    regression_eq += f"{p_vals[p_idx]:.2g}"
+    regression_eq += f"{p_vals[-1]:.2g}"
     regression_eq = regression_eq.replace("+ -", "– ")
+    regression_eq = regression_eq.replace("-", "–")
     print(f"  Regression Equation: {regression_eq}")
 
-    #plot it
-    fig = plt.figure()
-    fig.clf()
+
+    # plot it
+    # xs, ys, [zs] form the input data points
+    # xr, yr, [zr] form the regression curve
+    npts = 200
+    ax = fig.add_subplot(nrows, ncols, i + 1, projection="3d" if len(data[0]) > 2 else None)
     xs = [point[0] for point in data]
     ys = [point[1] for point in data]
+    xr = np.linspace(min(-3, min(xs)), max(3, max(xs)), npts)
     if len(data[0]) > 2:
         zs = [p[2] for p in data]
-        ax = fig.add_subplot(projection="3d")
+        yr = np.linspace(min(-3, min(ys)), max(3, max(ys)), npts)
+        zr = compute_regression_3d(xr, yr, p.vals)
         ax.scatter(xs, ys, zs)
+        ax.plot(xr, yr, zr, label=regression_eq)
     else:
-        plt.scatter(xs, ys)
+        yr = compute_regression_2d(xr, p.vals)
+        ax.scatter(xs, ys)
+        ax.plot(xr, yr, label=regression_eq)
+    ax.set_title(regression_eq)
 
-    plt.title(regression_eq)
-    filename = f"ch4_1_{prob_no}_plot.png"
-    plt.savefig(filename)
-    print(f"  Plot {filename} generated.")
-
-    prob_no += 1
     print()
 
+filename = f"ch4_1_plots.png"
+fig.savefig(filename)
+print(f"  Plot {filename} generated.")
 plt.close()
