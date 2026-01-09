@@ -225,9 +225,9 @@ def coefficient_matrix( order, data ):
     return Matrix(coeffs)
 
 def compute_regression_2d(xs, cs):
-    ys = [cs[-1] for _ in range(len(xs))]
-    for i, exp in enumerate(range(len(cs) - 1, 0, -1)):
-        ys = [cs[i] + x ** exp + y for x, y in zip(xs, ys)]
+    ys = np.array([cs[-1] for _ in range(len(xs))])
+    for coeff, exp in zip(cs,range(len(cs) - 1, 0, -1)):
+        ys += (coeff * (xs ** exp))
 
     return ys
 
@@ -295,7 +295,7 @@ for i, (order, data) in enumerate(problems):
     # plot it
     # xs, ys, [zs] form the input data points
     # xr, yr, [zr] form the regression curve
-    npts = 200
+    npts = 20
     ax = fig.add_subplot(nrows, ncols, i + 1, projection="3d" if len(data[0]) > 2 else None)
     xs = [point[0] for point in data]
     ys = [point[1] for point in data]
@@ -310,7 +310,7 @@ for i, (order, data) in enumerate(problems):
         yr = compute_regression_2d(xr, p.vals)
         ax.scatter(xs, ys)
         ax.plot(xr, yr, label=regression_eq)
-    ax.set_title(regression_eq)
+    ax.legend()
 
     print()
 
