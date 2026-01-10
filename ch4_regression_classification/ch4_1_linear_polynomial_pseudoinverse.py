@@ -283,9 +283,11 @@ for i, (order, data) in enumerate(problems):
     exponents = ['', '²', '³'][0:order]
     exponents.reverse()
     p_vals = p.vals
-    for p_idx, m in enumerate(exponents):
+    p_idx = 0
+    for m in exponents:
         for t in input_vars:
             regression_eq += f"{p_vals[p_idx]:.2g}{t}{m} + "
+            p_idx += 1
     regression_eq += f"{p_vals[-1]:.2g}"
     regression_eq = regression_eq.replace("+ -", "– ")
     regression_eq = regression_eq.replace("-", "–")
