@@ -53,3 +53,8 @@ Skycak, J. (2021). Hodgkin-Huxley Model of Action Potentials in Neurons. In Intr
 Skycak, J. (2021). Hash Tables. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/hash-tables/
 
 Skycak, J. (2021). Simplex Method. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/simplex-method/
+
+## Chapter 4 -- Regression and Classification
+
+Skycak, J. (2022). Linear, Polynomial, and Multiple Linear Regression via Pseudoinverse. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/linear-polynomial-and-multiple-linear-regression-via-pseudoinverse/
+
