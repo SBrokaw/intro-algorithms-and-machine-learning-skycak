@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-local script="ch4_3_power_log_pseudoinverse.py"
+local script="ch4_4_regression_issues.py"
 
 clear
 python $script
