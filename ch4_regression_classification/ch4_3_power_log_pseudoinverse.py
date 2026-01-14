@@ -245,6 +245,14 @@ def output_vector_prob1( data ):
 def output_vector_prob2( data ):
     return power_regression_output_vector(data)
 
+def output_vector_prob3( data ):
+    vals = [[-1 * log(1/y - 1)] for (y,) in data]
+    return Matrix(vals)
+
+def output_vector_prob4( data ):
+    vals = [[-1 * log((10 / (y - 0.5)) - 1)] for (y,) in data]
+    return Matrix(vals)
+
 def coefficient_matrix_ex1( data ):
     coeffs = []
     for d in data:
@@ -259,11 +267,7 @@ def coefficient_matrix_ex2( data ):
     return Matrix(coeffs)
 
 def coefficient_matrix_ex3( data ):
-    coeffs = []
-    for d in data:
-        x, y = d[0], d[1]
-        coeffs.append([x * sin(y), y * log(1 + x)])
-
+    coeffs = [[x, 1] for (x,) in data]
     return Matrix(coeffs)
 
 def coefficient_matrix_prob1( data ):
@@ -279,16 +283,10 @@ def coefficient_matrix_prob3( data ):
     for d in data:
         x = d[0]
         coeffs.append([3 ** x, cbrt(x)])
-
     return Matrix(coeffs)
 
 def coefficient_matrix_prob4( data ):
-    coeffs = []
-    for d in data:
-        x, y = d[0], d[1]
-        coeffs.append([x * y ** 2, 2 ** (x + y)])
-    # print(f"data:{data} coeffs:{coeffs}")
-
+    coeffs = [[x, 1] for (x,) in data]
     return Matrix(coeffs)
 
 def power_regression_string( p ):
@@ -301,7 +299,9 @@ def regression_string_ex1( p ):
     return power_regression_string(p)
 
 def regression_string_ex2( p ):
-    return "NOT YET IMPLEMENTED"
+    regression = f"y ≈ 5 / (1 + e^-({p.vals[0]:.2g}x + {p.vals[1]:.2g})) + 0.5"
+    regression = regression.replace("+ -", "– ")
+    return regression
 
 def regression_string_prob1( p ):
     return power_regression_string(p)
@@ -309,20 +309,29 @@ def regression_string_prob1( p ):
 def regression_string_prob2( p ):
     return exponent_regression_string(p)
 
+def regression_string_prob3( p ):
+    regression = f"y ≈ 1 / (1 + e^-({p.vals[0]:.2g}x + {p.vals[1]:.2g}))"
+    regression = regression.replace("+ -", "– ")
+    return regression
 
+def regression_string_prob4( p ):
+    regression = f"y ≈ 10 / (1 + e^-({p.vals[0]:.2g}x + {p.vals[1]:.2g})) + 0.5"
+    regression = regression.replace("+ -", "– ")
+    return regression
 
 table_width = 80
 '''
-    "Example 1."
-    "Example 2."
+    "Example 1. Power Regression"
+    "Example 2. Logistic Regression"
     "1. Fit a power regression y=a∙x^b to [(1,0.2),(2,0.3),(3,0.5)]."
     "2. Fit an exponential regression y=a∙b^x to [(1,0.2),(2,0.3),(3,0.5)]."
+    "3. Fit a logistic regression to [(1,0.2),(2,0.3),(3,0.5)]."
 '''
 problems = [
     ["Example 1. Power Regression", 
      output_vector_ex1, coefficient_matrix_ex1, regression_string_ex1,
      [(1,1),(2,5),(4,3)]],
-    ["Example 2. Logarithmic Regression", 
+    ["Example 2. Logistic Regression", 
      output_vector_ex2_2, coefficient_matrix_ex2, regression_string_ex2,
      [(1,1),(2,1),(3,2)]],
     ["1. Fit a power regression y=a∙x^b to [(1,0.2),(2,0.3),(3,0.5)].", 
@@ -330,13 +339,13 @@ problems = [
      [(1,0.2),(2,0.3),(3,0.5)]],
     ["2. Fit an exponential regression y=a∙b^x to [(1,0.2),(2,0.3),(3,0.5)].",
      output_vector_prob2, coefficient_matrix_prob2, regression_string_prob2,
-     [(1,0.2),(2,0.3),(3,0.5)]]
-    # (coefficient_matrix_ex2, [(0,1),(2,5),(4,3)]),
-    # (coefficient_matrix_ex3, [(0,1,50),(2,5,30),(4,3,20),(5,1,10)]),
-    # (coefficient_matrix_prob1, [(1,0),(3,-1),(4,5)]),
-    # (coefficient_matrix_prob2, [(1,0),(3,-1),(4,5)]),
-    # (coefficient_matrix_prob3, [(1,0),(3,-1),(4,5)]),
-    # (coefficient_matrix_prob4, [(-2,3,-3),(1,0,-4),(3,-1,2),(4,5,3)])
+     [(1,0.2),(2,0.3),(3,0.5)]],
+    ["3. Fit a logarithmic regression to [(1,0.2),(2,0.3),(3,0.5)].",
+     output_vector_prob3, coefficient_matrix_prob3, regression_string_prob3,
+     [(1,0.2),(2,0.3),(3,0.5)]],
+    ["4. Fit a logarithmic regression whose range is 0.5 < y < 10.5 to [(1,2),(2,3),(3,5)].",
+     output_vector_prob4, coefficient_matrix_prob4, regression_string_prob4,
+     [(1,2),(2,3),(3,5)]]
 ]
 for prob_desc, output_vector_eq, coefficient_matrix_eq, regression_string_eq, data in problems:
     print(f"".center(table_width, '_'))
