@@ -4,7 +4,7 @@
 # https://justinmath.com/linear-polynomial-and-multiple-linear-regression-via-pseudoinverse/
 
 import numpy as np
-from math import sin, sqrt, log, cbrt
+from math import sin, sqrt, log, cbrt, exp
 
 def dot_product( arr1, arr2 ):
     if len(arr1) != len(arr2):
@@ -224,21 +224,38 @@ def coefficient_matrix_polynomial( order, data ):
     # print(f"  coeffs:{coeffs}")
     return Matrix(coeffs)
 
+def power_regression_output_vector( data ):
+    vals = [[log(y)] for (y,) in data]
+    return Matrix(vals)
+
+def output_vector_ex1( data ):
+    return power_regression_output_vector(data)
+
+def output_vector_ex2( data ):
+    return Matrix([[log(y[0] - 0.5) - log(5)] for y in data])
+
+def output_vector_ex2_2( data ):
+    coeffs = [[-1 * log((5 / (y - 0.5)) - 1)] for (y,) in data]
+    # print(f"  DEBUG output_vect_ex2_2 data:{data} coeffs:{coeffs}")
+    return Matrix(coeffs)
+
+def output_vector_prob1( data ):
+    return power_regression_output_vector(data)
+
+def output_vector_prob2( data ):
+    return power_regression_output_vector(data)
+
 def coefficient_matrix_ex1( data ):
     coeffs = []
     for d in data:
-        coeffs.append([sin(d[0]), 2 ** d[0]])
+        x = d[0]
+        coeffs.append([1, log(x)])
     # print(f"data:{data} coeffs:{coeffs}")
 
     return Matrix(coeffs)
 
 def coefficient_matrix_ex2( data ):
-    coeffs = []
-    for d in data:
-        x = d[0]
-        coeffs.append([(2 ** x) / (1 + x), sqrt(x) / (1 + x)])
-    # print(f"data:{data} coeffs:{coeffs}")
-
+    coeffs = [[x, 1] for (x,) in data]
     return Matrix(coeffs)
 
 def coefficient_matrix_ex3( data ):
@@ -246,24 +263,15 @@ def coefficient_matrix_ex3( data ):
     for d in data:
         x, y = d[0], d[1]
         coeffs.append([x * sin(y), y * log(1 + x)])
-    # print(f"data:{data} coeffs:{coeffs}")
 
     return Matrix(coeffs)
 
 def coefficient_matrix_prob1( data ):
-    coeffs = []
-    for d in data:
-        x = d[0]
-        coeffs.append([log(1 + x), 1/x])
-
+    coeffs = [[1, log(x)] for (x,) in data]
     return Matrix(coeffs)
 
 def coefficient_matrix_prob2( data ):
-    coeffs = []
-    for d in data:
-        x = d[0]
-        coeffs.append([x / (2 ** x), 1 / (2 ** x)])
-
+    coeffs = [[1, x] for (x,) in data]
     return Matrix(coeffs)
 
 def coefficient_matrix_prob3( data ):
@@ -283,52 +291,72 @@ def coefficient_matrix_prob4( data ):
 
     return Matrix(coeffs)
 
-def compute_regression_2d(xs, cs):
-    ys = np.array([cs[-1] for _ in range(len(xs))])
-    for coeff, exp in zip(cs,range(len(cs) - 1, 0, -1)):
-        ys += (coeff * (xs ** exp))
+def power_regression_string( p ):
+    return f"y ≈ {exp(p.vals[0]):.2g}x^{p.vals[1]:.2g}"
 
-    return ys
+def exponent_regression_string( p ):
+    return f"y ≈ {exp(p.vals[0]):.2g}∙{exp(p.vals[1]):.2g}^x"
 
+def regression_string_ex1( p ):
+    return power_regression_string(p)
 
-def compute_regression_3d(xs, ys, cs):
-    return [cs[0] * x + cs[1] * y + cs[2] for x, y in zip(xs, ys)]
+def regression_string_ex2( p ):
+    return "NOT YET IMPLEMENTED"
+
+def regression_string_prob1( p ):
+    return power_regression_string(p)
+
+def regression_string_prob2( p ):
+    return exponent_regression_string(p)
 
 
 
 table_width = 80
-problem_descriptions = [
-    "# Example 1.",
-    "# Example 2.",
-    "# Example 3.",
-    "# 1. Fit y=a∙ln(1+x) + b/x to [(1,0),(3,−1),(4,5)].",
-    "# 2. Fit y=(a∙x+b)/(2^x) to [(1,0),(3,−1),(4,5)].",
-    "# 3. Fit y=±3^(a+x) ± ∛(b∙x) to [(1,0),(3,−1),(4,5)].",
-    "# 4. Fit z=a∙x∙y² + b∙2^(x+y) to [(-2,3,-3),(1,0,-4),(3,-1,2),(4,5,3)]."
-]
+'''
+    "Example 1."
+    "Example 2."
+    "1. Fit a power regression y=a∙x^b to [(1,0.2),(2,0.3),(3,0.5)]."
+    "2. Fit an exponential regression y=a∙b^x to [(1,0.2),(2,0.3),(3,0.5)]."
+'''
 problems = [
-    (coefficient_matrix_ex1, [(0,1),(2,5),(4,3)]),
-    (coefficient_matrix_ex2, [(0,1),(2,5),(4,3)]),
-    (coefficient_matrix_ex3, [(0,1,50),(2,5,30),(4,3,20),(5,1,10)]),
-    (coefficient_matrix_prob1, [(1,0),(3,-1),(4,5)]),
-    (coefficient_matrix_prob2, [(1,0),(3,-1),(4,5)]),
-    (coefficient_matrix_prob3, [(1,0),(3,-1),(4,5)]),
-    (coefficient_matrix_prob4, [(-2,3,-3),(1,0,-4),(3,-1,2),(4,5,3)])
+    ["Example 1. Power Regression", 
+     output_vector_ex1, coefficient_matrix_ex1, regression_string_ex1,
+     [(1,1),(2,5),(4,3)]],
+    ["Example 2. Logarithmic Regression", 
+     output_vector_ex2_2, coefficient_matrix_ex2, regression_string_ex2,
+     [(1,1),(2,1),(3,2)]],
+    ["1. Fit a power regression y=a∙x^b to [(1,0.2),(2,0.3),(3,0.5)].", 
+     output_vector_prob1, coefficient_matrix_prob1, regression_string_prob1,
+     [(1,0.2),(2,0.3),(3,0.5)]],
+    ["2. Fit an exponential regression y=a∙b^x to [(1,0.2),(2,0.3),(3,0.5)].",
+     output_vector_prob2, coefficient_matrix_prob2, regression_string_prob2,
+     [(1,0.2),(2,0.3),(3,0.5)]]
+    # (coefficient_matrix_ex2, [(0,1),(2,5),(4,3)]),
+    # (coefficient_matrix_ex3, [(0,1,50),(2,5,30),(4,3,20),(5,1,10)]),
+    # (coefficient_matrix_prob1, [(1,0),(3,-1),(4,5)]),
+    # (coefficient_matrix_prob2, [(1,0),(3,-1),(4,5)]),
+    # (coefficient_matrix_prob3, [(1,0),(3,-1),(4,5)]),
+    # (coefficient_matrix_prob4, [(-2,3,-3),(1,0,-4),(3,-1,2),(4,5,3)])
 ]
-for i, (coefficient_matrix_eq, data) in enumerate(problems):
+for prob_desc, output_vector_eq, coefficient_matrix_eq, regression_string_eq, data in problems:
     print(f"".center(table_width, '_'))
     print(f"coeff_eq:{coefficient_matrix_eq.__name__} data:{data}".center(table_width, '—'))
     print(f"".center(table_width, '='))
     x = [list(point[:-1]) for point in data]
-    y = Matrix([[point[-1]] for point in data])
+    y = output_vector_eq([[point[-1]] for point in data])
+    # print(f"y: ", end='')
+    # y.print()
     X = coefficient_matrix_eq(x)
+    # print(f"X: ", end='')
+    # X.print()
 
     X_inv = X.pseudoinverse()
     X_T = X.transpose()
     X_T_y = X_T.matrix_multiply(y)
     p = X_inv.matrix_multiply(X_T_y)
-    print(f"p:\t\t{problem_descriptions[i]}")
+    print(f"p:\t{prob_desc}")
     p.print()
+    print(f"  {regression_string_eq(p)}")
     print(f"".center(table_width, "—"))
 
     print()
