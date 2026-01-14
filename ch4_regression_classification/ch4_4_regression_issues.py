@@ -234,6 +234,7 @@ def output_vector_polynomial( data ):
 
 # linear, quadratic, and <n> order polynomial regression string for up to 2 input variables x and y
 def regression_string_polynomial( order, p ):
+    sig_figs = 4
     regression_eq = ""
     num_input_vars = (len(p.vals) - 1) // order
     input_vars = ['x', 'y', 'z'][0:num_input_vars]
@@ -244,9 +245,9 @@ def regression_string_polynomial( order, p ):
     p_idx = 0
     for m in exponents:
         for t in input_vars:
-            regression_eq += f"{p.vals[p_idx]:.2g}{t}{m} + "
+            regression_eq += f"{p.vals[p_idx]:.{sig_figs}g}{t}{m} + "
             p_idx += 1
-    regression_eq += f"{p.vals[-1]:.2g}"
+    regression_eq += f"{p.vals[-1]:.{sig_figs}g}"
     regression_eq = regression_eq.replace("+ -", "– ")
     regression_eq = regression_eq.replace("-", "–")
 
@@ -261,7 +262,16 @@ def exponent_regression_string( p ):
 def regression_string_ex1( order, p ):
     return regression_string_polynomial(order, p)
 
+def predicted_val_polynomial( p, x ):
+    exponents = [e for e in range(len(p.vals) - 1, -1, -1)]
+    y = 0
+    for c, exp in zip(p.vals, exponents):
+        y += c * x ** exp
+
+    return y
+
 table_width = 80
+col_width = table_width // 3
 problems = [
     ["Example 1. Linear Regression", 
      output_vector_polynomial, coefficient_matrix_polynomial, regression_string_polynomial, 1,
@@ -274,17 +284,15 @@ problems = [
      [(0,0),(1,10),(2,20),(3,50),(4,35),(5,100),(6,110),(7,190),(8,150),(9,260),(10,270)]]
 ]
 for prob_desc, output_vector_eq, coefficient_matrix_eq, regression_string_eq, order, data in problems:
+    ## Problem Start
     print(f"".center(table_width, '_'))
     print(f"coeff_eq:{coefficient_matrix_eq.__name__} data:{data}".center(table_width, '—'))
     print(f"".center(table_width, '='))
     x = [list(point[:-1]) for point in data]
     y = output_vector_eq([[point[-1]] for point in data])
-    # print(f"y: ", end='')
-    # y.print()
     X = coefficient_matrix_eq(order, x)
-    # print(f"X: ", end='')
-    # X.print()
 
+    ## Calculate and Print Regression
     X_inv = X.pseudoinverse()
     X_T = X.transpose()
     X_T_y = X_T.matrix_multiply(y)
@@ -292,6 +300,34 @@ for prob_desc, output_vector_eq, coefficient_matrix_eq, regression_string_eq, or
     print(f"  {prob_desc}")
     print(f"  p:{p.vals}")
     print(f"  {regression_string_eq(order, p)}")
-    print(f"".center(table_width, "—"))
 
+    ## Calculate Cross-validation error "cross-validated residual sum of squares (RSS)"
+    rss_error = 0
+    print(f"  " + 
+          f" Removed Point ".center(col_width, '_') +
+          f" Regression Eq. ".center(col_width, '_') +
+          f" Predicted Val. ".center(col_width, '_')) 
+    for removed_point in data:
+        remaining_data = data.copy()
+        remaining_data.remove(removed_point)
+
+        x = [list(point[:-1]) for point in remaining_data]
+        y = output_vector_eq([[point[-1]] for point in remaining_data])
+        X = coefficient_matrix_eq(order, x)
+
+        ## Calculate and Print Regression
+        X_inv = X.pseudoinverse()
+        X_T = X.transpose()
+        X_T_y = X_T.matrix_multiply(y)
+        p = X_inv.matrix_multiply(X_T_y)
+        predicted_val = predicted_val_polynomial(p, removed_point[0])
+        rss_error += (predicted_val - removed_point[1]) ** 2
+
+        print(f"  " +
+              f"{removed_point}".center(col_width) +
+              f"{regression_string_eq(order, p)}"[:col_width].center(col_width) +
+              f"{predicted_val:.4g}".center(col_width))
+
+    print(f"    Cross-Validated RSS Error: {rss_error:.4g}")
+    print(f"".center(table_width, "—"))
     print()
