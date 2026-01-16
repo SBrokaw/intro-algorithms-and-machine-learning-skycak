@@ -1,9 +1,12 @@
-# Introduction to Algorithms and Machine Learning - Justin Skycak
+# Introduction to Algorithms and Machine Learning, by Justin Skycak
 https://www.justinmath.com/books/#introduction-to-algorithms-and-machine-learning
 
-https://docs.python.org/3/library/stdtypes.html#
+https://docs.python.org/3/library/index.html
 
-## Chapter 1 -- Hello World
+## Prerequisites:
+Mathematics for Machine Learning. https://mathacademy.com/courses/mathematics-for-machine-learning
+
+## Chapter 1: Hello World
 
 Skycak, J. (2021). Some Short Introductory Coding Exercises. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/some-short-introductory-coding-exercises/
 
@@ -17,7 +20,7 @@ Skycak, J. (2021). Roulette Wheel Selection. In Introduction to Algorithms and M
 
 Skycak, J. (2021). Cartesian Product. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/cartesian-product/
 
-## Chapter 2 -- Searching and Sorting
+## Chapter 2: Searching and Sorting
 
 Skycak, J. (2021). Brute Force Search with Linear-Encoding Cryptography. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/brute-force-search-with-linear-encoding-cryptography/
 
@@ -34,7 +37,7 @@ Skycak, J. (2021). Selection, Bubble, Insertion, and Counting Sort. In Introduct
 
 Skycak, J. (2021). Merge Sort and Quicksort. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/merge-sort-and-quicksort/
 
-## Chapter 3 -- Objects
+## Chapter 3: Objects
 
 Skycak, J. (2021). Basic Matrix Arithmetic. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/basic-matrix-arithmetic/
 
@@ -54,7 +57,7 @@ Skycak, J. (2021). Hash Tables. In Introduction to Algorithms and Machine Learni
 
 Skycak, J. (2021). Simplex Method. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/simplex-method/
 
-## Chapter 4 -- Regression and Classification
+## Chapter 4: Regression and Classification
 
 Skycak, J. (2022). Linear, Polynomial, and Multiple Linear Regression via Pseudoinverse. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/linear-polynomial-and-multiple-linear-regression-via-pseudoinverse/
 
