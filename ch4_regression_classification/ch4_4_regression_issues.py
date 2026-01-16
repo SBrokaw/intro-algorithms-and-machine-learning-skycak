@@ -1,7 +1,7 @@
 # Skycak, J. (2022). Overfitting, Underfitting, Cross-Validation, and the Bias-Variance Tradeoff.
 # In Introduction to Algorithms and Machine Learning: 
 # from Sorting to Strategic Agents. 
-# https://justinmath.com/linear-polynomial-and-multiple-linear-regression-via-pseudoinverse/
+# https://justinmath.com/overfitting-underfitting-cross-validation-and-the-bias-variance-tradeoff/
 
 import numpy as np
 from math import sin, sqrt, log, cbrt, exp
