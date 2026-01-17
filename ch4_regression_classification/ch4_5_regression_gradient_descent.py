@@ -2,7 +2,7 @@
 # In Introduction to Algorithms and Machine Learning: 
 # from Sorting to Strategic Agents. 
 # https://justinmath.com/regression-via-gradient-descent/
-from math import log
+from math import log, exp, sin, cos
 
 const_PI = 3.141592654
 const_e = 2.718281828
@@ -222,12 +222,20 @@ def output_vector_polynomial( data ):
     vals = [[y] for (y,) in data]
     return Matrix(vals)
 
+def output_vector_prob3( data ):
+    vals = [[-1 * log((5 / (y - 0.5)) - 1)] for (y,) in data]
+    return Matrix(vals)
+
 def coefficient_matrix_polynomial( order, data ):
     coeffs = []
     for d in data:
         coeffs += [[v ** exp for exp in range(order, 0, -1) for v in d] + [1]]
 
     # print(f"  coeffs:{coeffs}")
+    return Matrix(coeffs)
+
+def coefficient_matrix_prob3( data ):
+    coeffs = [[x, 1] for (x,) in data]
     return Matrix(coeffs)
 
 # linear, quadratic, and <n> order polynomial regression string for up to 2 input variables x and y
@@ -251,6 +259,19 @@ def regression_string_polynomial( order, p ):
 
     return regression_eq
 
+
+def regression_string_prob3( p ):
+    regression = f"y ≈ 5 / (1 + e^-({p.vals[0]:.2g}x + {p.vals[1]:.2g})) + 0.5"
+    regression = regression.replace("+ -", "– ")
+    return regression
+
+def regression_string_prob4( p ):
+    a, b, c, d = p.vals[0], p.vals[1], p.vals[2], p.vals[3]
+    regression = f"y ≈ {a:.2g}∙sin({b:.2g}∙x) + {c:.2g}∙sin({d:.2g}∙x)"
+    regression = regression.replace("+ -", "– ")
+    return regression
+
+
 def next_guess( v, gradient, alpha ):
     w = [v[i] - alpha * gradient[i] for i in range(len(v))]
     return w
@@ -272,6 +293,24 @@ def RSS_sigma_problem2( v, data ):
     a, b, c = v[0], v[1], v[2]
     for (x, y) in data:
         rss += (a * x ** 2 + b * x + c - y) ** 2
+
+    return rss
+
+
+def RSS_sigma_problem3( v, data ):
+    rss = 0
+    a, b = v[0], v[1]
+    for (x, y) in data:
+        rss += (5 / (1 + exp(-1 * (a * x + b))) + 0.5 - y) ** 2
+
+    return rss
+
+
+def RSS_sigma_problem4( v, data ):
+    rss = 0
+    a, b, c, d = v[0], v[1], v[2], v[3]
+    for (x, y) in data:
+        rss += (a * sin(b * x) + c * sin(d * x) - y) ** 2
 
     return rss
 
@@ -312,6 +351,33 @@ def gradient_sigma_problem2( v, data ):
 
     return [da, db, dc]
 
+
+def gradient_sigma_problem3( v, data ):
+    da = 0
+    db = 0
+    a, b = v[0], v[1]
+    for (x, y) in data:
+        common = 2 * (5 / (1 + exp(-1 * (a * x + b))) + 0.5 - y) * (-5 * (1 + exp(-1 * (a * x + b))) ** -2 * -1 * exp(-1 * (a * x + b)))
+        da += common * x
+        db += common 
+
+    return [da, db]
+
+
+def gradient_sigma_problem4( v, data ):
+    da = 0
+    db = 0
+    dc = 0
+    dd = 0
+    a, b, c, d = v[0], v[1], v[2], v[3]
+    for (x, y) in data:
+        common = 2 * (a * sin(b * x) + c * sin(d * x) - y)
+        da += common * sin(b * x)
+        db += common * a * b * cos(b * x)
+        dc += common * sin(d * x)
+        dd += common * c * d * cos(d * x)
+
+    return [da, db, dc, dd]
 
 def problem1( alpha, trials ):
     print(' Problem1 : Power Regression y = a∙x^b '.center(table_width, '='))
@@ -373,6 +439,46 @@ def sigma_problem2( alpha, trials ):
 
     return x_n
 
+def sigma_problem3( alpha, trials ):
+    print(" Problem3 Sigma Notation: y ≈ 5 / (1 + e^-(ax + b)) + 0.5 ".center(table_width, '='))
+    output_mask = {0, 1, 2, 3, 50, 100, 500, 1000, 5000, 10000}
+    data = [(1, 1), (2, 1), (3, 2)]
+    x_n = [1, 1]
+    print(f"  n    " + f"<a_n, b_n>".center(col_width) + f"∇RSS(a_n, b_n)".center(col_width) + f"RSS(a_n, b_n)".center(col_width))
+    print(f''.center(table_width, '‾'))
+    for n in range(trials):
+        m = gradient_sigma_problem3( x_n, data )
+        p = RSS_sigma_problem3( x_n, data )
+        if n in output_mask: 
+            print(f"  {n}".ljust(7) 
+                  + f"<{x_n[0]:.3g}, {x_n[1]:.3g}>".center(col_width) 
+                  + f"<{m[0]:.3f}, {m[1]:.3f}>".center(col_width)
+                  + f"{p:.6f}".center(col_width))
+
+        x_n = next_guess( x_n, m, alpha )
+
+    return x_n
+
+def sigma_problem4( alpha, trials ):
+    print(" Problem4 Sigma Notation: y ≈ a∙sin(b∙x) + c∙sin(d∙x) ".center(table_width, '='))
+    output_mask = {0, 1, 2, 3, 50, 100, 500, 1000, 5000, 10000}
+    data = [(0,0),(1,-1),(2,2),(3,0),(4,0),(5,2),(6,-4),(7,4),(8,1),(9,-3)]
+    x_n = [1, 1, -1, -1]
+    print(f"  n    " + f"<a_n, b_n, c_n, d_n>".center(col_width) + f"∇RSS(a_n, b_n, c_n, d_n)".center(col_width) + f"RSS(a_n, b_n, c_n, d_n)".center(col_width))
+    print(f''.center(table_width, '‾'))
+    for n in range(trials):
+        m = gradient_sigma_problem4( x_n, data )
+        p = RSS_sigma_problem4( x_n, data )
+        if n in output_mask: 
+            print(f"  {n}".ljust(7) 
+                  + f"<{x_n[0]:.3g}, {x_n[1]:.3g}, {x_n[2]:.3g}, {x_n[3]:.3g}>".center(col_width) 
+                  + f"<{m[0]:.3f}, {m[1]:.3g}, {m[2]:.3g}, {m[3]:.3f}>".center(col_width)
+                  + f"{p:.3f}".center(col_width))
+
+        x_n = next_guess( x_n, m, alpha )
+
+    return x_n
+
 def pseudoinverse_problem2():
     print(" Problem2 Pseudoinverse: y = a∙x² + b∙x + c ".center(table_width, '='))
     data = [(0.001, 0.01), (2, 4), (3, 9)]
@@ -396,12 +502,44 @@ def pseudoinverse_problem2():
     print(f"  {regression_string_eq(order, p)}")
     
 
+def pseudoinverse_problem3():
+    print(" Problem3 Pseudoinverse: y ≈ 5 / (1 + e^-(ax + b)) + 0.5 ".center(table_width, '='))
+    data = [(1, 1), (2, 1), (3, 2)]
+    output_vector_eq = output_vector_prob3
+    coefficient_matrix_eq = coefficient_matrix_prob3
+    regression_string_eq = regression_string_prob3
+    ## Problem Start
+    print(f"  coeff_eq:{coefficient_matrix_eq.__name__} data:{data}")
+    print(f"".center(table_width, '—'))
+    x = [list(point[:-1]) for point in data]
+    y = output_vector_eq([[point[-1]] for point in data])
+    X = coefficient_matrix_eq(x)
+
+    ## Calculate and Print Regression
+    X_inv = X.pseudoinverse()
+    X_T = X.transpose()
+    X_T_y = X_T.matrix_multiply(y)
+    p = X_inv.matrix_multiply(X_T_y)
+    print(f"  p:{p.vals}")
+    print(f"  {regression_string_eq(p)}")
+    
 
 a, b = problem1( 0.001, 10001)
 print(f"  Final Regression (a, b) = ({a:.6g}, {b:.6g})\n")
 a, b = sigma_problem1( 0.001, 10001)
 print(f"  Final Regression (a, b) = ({a:.6g}, {b:.6g})\n")
+
 a, b, c = sigma_problem2( 0.001, 10001)
 print(f"  Final Regression (a, b, c) = ({a:.6g}, {b:.6g}, {c:.6g})")
 print(f"  {regression_string_polynomial(2, Matrix([[a],[b],[c]]))}\n")
 pseudoinverse_problem2()
+print()
+
+a, b = sigma_problem3( 0.001, 10001)
+print(f"  Final Regression (a, b) = ({a:.6g}, {b:.6g})")
+print(f"  {regression_string_prob3(Matrix([[a],[b]]))}\n")
+pseudoinverse_problem3()
+
+a, b, c, d = sigma_problem4( 0.001, 10001)
+print(f"  Final Regression (a, b, c, d) = ({a:.6g}, {b:.6g}, {c:.6g}, {d:.6g})")
+print(f"  {regression_string_prob4(Matrix([[a],[b],[c],[d]]))}\n")
