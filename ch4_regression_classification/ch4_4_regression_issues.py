@@ -1,4 +1,4 @@
-# Skycak, J. (2022). Regressing a Linear Combination of Nonlinear Functions via Pseudoinverse.
+# Skycak, J. (2022). Overfitting, Underfitting, Cross-Validation, and the Bias-Variance Tradeoff.
 # In Introduction to Algorithms and Machine Learning: 
 # from Sorting to Strategic Agents. 
 # https://justinmath.com/linear-polynomial-and-multiple-linear-regression-via-pseudoinverse/
@@ -228,66 +228,30 @@ def power_regression_output_vector( data ):
     vals = [[log(y)] for (y,) in data]
     return Matrix(vals)
 
-def output_vector_ex1( data ):
-    return power_regression_output_vector(data)
-
-def output_vector_ex2( data ):
-    return Matrix([[log(y[0] - 0.5) - log(5)] for y in data])
-
-def output_vector_ex2_2( data ):
-    coeffs = [[-1 * log((5 / (y - 0.5)) - 1)] for (y,) in data]
-    # print(f"  DEBUG output_vect_ex2_2 data:{data} coeffs:{coeffs}")
-    return Matrix(coeffs)
-
-def output_vector_prob1( data ):
-    return power_regression_output_vector(data)
-
-def output_vector_prob2( data ):
-    return power_regression_output_vector(data)
-
-def output_vector_prob3( data ):
-    vals = [[-1 * log(1/y - 1)] for (y,) in data]
+def output_vector_polynomial( data ):
+    vals = [[y] for (y,) in data]
     return Matrix(vals)
 
-def output_vector_prob4( data ):
-    vals = [[-1 * log((10 / (y - 0.5)) - 1)] for (y,) in data]
-    return Matrix(vals)
+# linear, quadratic, and <n> order polynomial regression string for up to 2 input variables x and y
+def regression_string_polynomial( order, p ):
+    sig_figs = 4
+    regression_eq = ""
+    num_input_vars = (len(p.vals) - 1) // order
+    input_vars = ['x', 'y', 'z'][0:num_input_vars]
+    output_var = ['x', 'y', 'z'][num_input_vars]
+    regression_eq += f"{output_var} ≈ "
+    exponents = ['', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸'][0:order]
+    exponents.reverse()
+    p_idx = 0
+    for m in exponents:
+        for t in input_vars:
+            regression_eq += f"{p.vals[p_idx]:.{sig_figs}g}{t}{m} + "
+            p_idx += 1
+    regression_eq += f"{p.vals[-1]:.{sig_figs}g}"
+    regression_eq = regression_eq.replace("+ -", "– ")
+    regression_eq = regression_eq.replace("-", "–")
 
-def coefficient_matrix_ex1( data ):
-    coeffs = []
-    for d in data:
-        x = d[0]
-        coeffs.append([1, log(x)])
-    # print(f"data:{data} coeffs:{coeffs}")
-
-    return Matrix(coeffs)
-
-def coefficient_matrix_ex2( data ):
-    coeffs = [[x, 1] for (x,) in data]
-    return Matrix(coeffs)
-
-def coefficient_matrix_ex3( data ):
-    coeffs = [[x, 1] for (x,) in data]
-    return Matrix(coeffs)
-
-def coefficient_matrix_prob1( data ):
-    coeffs = [[1, log(x)] for (x,) in data]
-    return Matrix(coeffs)
-
-def coefficient_matrix_prob2( data ):
-    coeffs = [[1, x] for (x,) in data]
-    return Matrix(coeffs)
-
-def coefficient_matrix_prob3( data ):
-    coeffs = []
-    for d in data:
-        x = d[0]
-        coeffs.append([3 ** x, cbrt(x)])
-    return Matrix(coeffs)
-
-def coefficient_matrix_prob4( data ):
-    coeffs = [[x, 1] for (x,) in data]
-    return Matrix(coeffs)
+    return regression_eq
 
 def power_regression_string( p ):
     return f"y ≈ {exp(p.vals[0]):.2g}x^{p.vals[1]:.2g}"
@@ -295,77 +259,75 @@ def power_regression_string( p ):
 def exponent_regression_string( p ):
     return f"y ≈ {exp(p.vals[0]):.2g}∙{exp(p.vals[1]):.2g}^x"
 
-def regression_string_ex1( p ):
-    return power_regression_string(p)
+def regression_string_ex1( order, p ):
+    return regression_string_polynomial(order, p)
 
-def regression_string_ex2( p ):
-    regression = f"y ≈ 5 / (1 + e^-({p.vals[0]:.2g}x + {p.vals[1]:.2g})) + 0.5"
-    regression = regression.replace("+ -", "– ")
-    return regression
+def predicted_val_polynomial( p, x ):
+    exponents = [e for e in range(len(p.vals) - 1, -1, -1)]
+    y = 0
+    for c, exp in zip(p.vals, exponents):
+        y += c * x ** exp
 
-def regression_string_prob1( p ):
-    return power_regression_string(p)
-
-def regression_string_prob2( p ):
-    return exponent_regression_string(p)
-
-def regression_string_prob3( p ):
-    regression = f"y ≈ 1 / (1 + e^-({p.vals[0]:.2g}x + {p.vals[1]:.2g}))"
-    regression = regression.replace("+ -", "– ")
-    return regression
-
-def regression_string_prob4( p ):
-    regression = f"y ≈ 10 / (1 + e^-({p.vals[0]:.2g}x + {p.vals[1]:.2g})) + 0.5"
-    regression = regression.replace("+ -", "– ")
-    return regression
+    return y
 
 table_width = 80
-'''
-    "Example 1. Power Regression"
-    "Example 2. Logistic Regression"
-    "1. Fit a power regression y=a∙x^b to [(1,0.2),(2,0.3),(3,0.5)]."
-    "2. Fit an exponential regression y=a∙b^x to [(1,0.2),(2,0.3),(3,0.5)]."
-    "3. Fit a logistic regression to [(1,0.2),(2,0.3),(3,0.5)]."
-'''
+col_width = table_width // 3
 problems = [
-    ["Example 1. Power Regression", 
-     output_vector_ex1, coefficient_matrix_ex1, regression_string_ex1,
-     [(1,1),(2,5),(4,3)]],
-    ["Example 2. Logistic Regression", 
-     output_vector_ex2_2, coefficient_matrix_ex2, regression_string_ex2,
-     [(1,1),(2,1),(3,2)]],
-    ["1. Fit a power regression y=a∙x^b to [(1,0.2),(2,0.3),(3,0.5)].", 
-     output_vector_prob1, coefficient_matrix_prob1, regression_string_prob1,
-     [(1,0.2),(2,0.3),(3,0.5)]],
-    ["2. Fit an exponential regression y=a∙b^x to [(1,0.2),(2,0.3),(3,0.5)].",
-     output_vector_prob2, coefficient_matrix_prob2, regression_string_prob2,
-     [(1,0.2),(2,0.3),(3,0.5)]],
-    ["3. Fit a logarithmic regression to [(1,0.2),(2,0.3),(3,0.5)].",
-     output_vector_prob3, coefficient_matrix_prob3, regression_string_prob3,
-     [(1,0.2),(2,0.3),(3,0.5)]],
-    ["4. Fit a logarithmic regression whose range is 0.5 < y < 10.5 to [(1,2),(2,3),(3,5)].",
-     output_vector_prob4, coefficient_matrix_prob4, regression_string_prob4,
-     [(1,2),(2,3),(3,5)]]
+    ["Example 1. Linear Regression", 
+     output_vector_polynomial, coefficient_matrix_polynomial, regression_string_polynomial, 1,
+     [(0,0),(1,10),(2,20),(3,50),(4,35),(5,100),(6,110),(7,190),(8,150),(9,260),(10,270)]],
+    ["Example 2. Quadratic Regression", 
+     output_vector_polynomial, coefficient_matrix_polynomial, regression_string_polynomial, 2,
+     [(0,0),(1,10),(2,20),(3,50),(4,35),(5,100),(6,110),(7,190),(8,150),(9,260),(10,270)]],
+    ["Example 3. Eighth Order Regression", 
+     output_vector_polynomial, coefficient_matrix_polynomial, regression_string_polynomial, 8,
+     [(0,0),(1,10),(2,20),(3,50),(4,35),(5,100),(6,110),(7,190),(8,150),(9,260),(10,270)]]
 ]
-for prob_desc, output_vector_eq, coefficient_matrix_eq, regression_string_eq, data in problems:
+for prob_desc, output_vector_eq, coefficient_matrix_eq, regression_string_eq, order, data in problems:
+    ## Problem Start
     print(f"".center(table_width, '_'))
     print(f"coeff_eq:{coefficient_matrix_eq.__name__} data:{data}".center(table_width, '—'))
     print(f"".center(table_width, '='))
     x = [list(point[:-1]) for point in data]
     y = output_vector_eq([[point[-1]] for point in data])
-    # print(f"y: ", end='')
-    # y.print()
-    X = coefficient_matrix_eq(x)
-    # print(f"X: ", end='')
-    # X.print()
+    X = coefficient_matrix_eq(order, x)
 
+    ## Calculate and Print Regression
     X_inv = X.pseudoinverse()
     X_T = X.transpose()
     X_T_y = X_T.matrix_multiply(y)
     p = X_inv.matrix_multiply(X_T_y)
-    print(f"p:\t{prob_desc}")
-    p.print()
-    print(f"  {regression_string_eq(p)}")
-    print(f"".center(table_width, "—"))
+    print(f"  {prob_desc}")
+    print(f"  p:{p.vals}")
+    print(f"  {regression_string_eq(order, p)}")
 
+    ## Calculate Cross-validation error "cross-validated residual sum of squares (RSS)"
+    rss_error = 0
+    print(f"  " + 
+          f" Removed Point ".center(col_width, '_') +
+          f" Regression Eq. ".center(col_width, '_') +
+          f" Predicted Val. ".center(col_width, '_')) 
+    for removed_point in data:
+        remaining_data = data.copy()
+        remaining_data.remove(removed_point)
+
+        x = [list(point[:-1]) for point in remaining_data]
+        y = output_vector_eq([[point[-1]] for point in remaining_data])
+        X = coefficient_matrix_eq(order, x)
+
+        ## Calculate and Print Regression
+        X_inv = X.pseudoinverse()
+        X_T = X.transpose()
+        X_T_y = X_T.matrix_multiply(y)
+        p = X_inv.matrix_multiply(X_T_y)
+        predicted_val = predicted_val_polynomial(p, removed_point[0])
+        rss_error += (predicted_val - removed_point[1]) ** 2
+
+        print(f"  " +
+              f"{removed_point}".center(col_width) +
+              f"{regression_string_eq(order, p)}"[:col_width].center(col_width) +
+              f"{predicted_val:.4g}".center(col_width))
+
+    print(f"    Cross-Validated RSS Error: {rss_error:.4g}")
+    print(f"".center(table_width, "—"))
     print()

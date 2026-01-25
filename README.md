@@ -61,3 +61,5 @@ Skycak, J. (2022). Linear, Polynomial, and Multiple Linear Regression via Pseudo
 Skycak, J. (2022). Regressing a Linear Combination of Nonlinear Functions via Pseudoinverse. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/regressing-a-linear-combination-of-nonlinear-functions-via-pseudoinverse/
 
 Skycak, J. (2022). Power, Exponential, and Logistic Regression via Pseudoinverse. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/power-exponential-and-logistic-regression-via-pseudoinverse/
+
+Skycak, J. (2022). Overfitting, Underfitting, Cross-Validation, and the Bias-Variance Tradeoff. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/overfitting-underfitting-cross-validation-and-the-bias-variance-tradeoff/
