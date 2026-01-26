@@ -28,12 +28,15 @@ def k_nearest(data, k):
     data_sorted = sorted(data, key=lambda cookie: cookie[2])
     nearest = [_ for _ in data_sorted[:k]]
 
-    print(f"  lens: nearest:{len(nearest)}{nearest} data_sorted:{len(data_sorted)}")
     while(len(nearest) < len(data_sorted) and data_sorted[len(nearest)][2] <= nearest[-1][2]):
         nearest += [data_sorted[len(nearest)]]
 
     return nearest
     
+
+def majority_type(cookies):
+    unique_names = {}
+    for 
 
 data = [   ["Shortbread", [0.15, 0.2]],
            ["Shortbread", [0.15, 0.3]],
@@ -67,7 +70,8 @@ for k in range(1, 10):
         data_distances = [[type, ingredients, distance(ratios, ingredients)] for (type, ingredients) in remaining_cookies]
 
         nearest_k_cookies = k_nearest(data_distances, k)
-        print(f"  Nearest {k} Cookies to {type}, {ratios}:")
-        for c in nearest_k_cookies: print(f"    {c}")
+        type_guess = majority_type(nearest_k_cookies)
+        # print(f"  Nearest {k} Cookies to {type}, {ratios}:")
+        # for c in nearest_k_cookies: print(f"    {c}")
 
     
