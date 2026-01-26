@@ -26,10 +26,11 @@ def k_nearest(data, k):
     if k <= 0: return []
     if k > len(data): k = len(data)
     data_sorted = sorted(data, key=lambda cookie: cookie[2])
-    nearest = data_sorted[:k]
+    nearest = [_ for _ in data_sorted[:k]]
 
-    while(data_sorted[len(nearest) + 1][2] <= nearest[-1][2]):
-        nearest += data_sorted[len(nearest) + 1]
+    print(f"  lens: nearest:{len(nearest)}{nearest} data_sorted:{len(data_sorted)}")
+    while(len(nearest) < len(data_sorted) and data_sorted[len(nearest)][2] <= nearest[-1][2]):
+        nearest += [data_sorted[len(nearest)]]
 
     return nearest
     
@@ -46,7 +47,7 @@ data = [   ["Shortbread", [0.15, 0.2]],
            ["Sugar", [0.25, 0.35]]]
 
 table_width = 80
-print(f" Chapter 4 Lesson 6——K Nearest Neighbors ".center(table_width, '='))
+print(f" Chapter 4, Lesson 6: K Nearest Neighbors ".center(table_width, '='))
 new_cookie = [0.25, 0.3]
 data_distances = [[type, ingredients, distance(new_cookie, ingredients)] for (type, ingredients) in data]
 
