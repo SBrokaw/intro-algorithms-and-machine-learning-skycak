@@ -1,7 +1,6 @@
-# Skycak, J. (2022). Regressing a Linear Combination of Nonlinear Functions via Pseudoinverse.
-# In Introduction to Algorithms and Machine Learning: 
-# from Sorting to Strategic Agents. 
-# https://justinmath.com/linear-polynomial-and-multiple-linear-regression-via-pseudoinverse/
+# Skycak, J. (2022). Power, Exponential, and Logistic Regression via Pseudoinverse. 
+# In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. 
+# https://justinmath.com/power-exponential-and-logistic-regression-via-pseudoinverse/
 
 import numpy as np
 from math import sin, sqrt, log, cbrt, exp
