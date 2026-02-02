@@ -36,7 +36,25 @@ def k_nearest(data, k):
 
 def majority_type(cookies):
     unique_names = {}
-    for 
+    for c in cookies:
+        type = c[0]
+        dist = c[2]
+        if type not in unique_names:
+            unique_names[type] = [1, dist]
+        elif type in unique_names:
+            unique_names[type][0] += 1 
+            unique_names[type][1] += dist 
+
+    init_choice = list(unique_names)[0]
+    most_common = init_choice
+    cnt = unique_names[init_choice][0]
+    dist = unique_names[init_choice][1]
+    for t in unique_names:
+        if unique_names[t][0] >= cnt and unique_names[t][1] < dist: 
+            most_common = t 
+            dist = unique_names[t][1]
+
+    return most_common
 
 data = [   ["Shortbread", [0.15, 0.2]],
            ["Shortbread", [0.15, 0.3]],
@@ -57,6 +75,7 @@ data_distances = [[type, ingredients, distance(new_cookie, ingredients)] for (ty
 ## Leave One Out Cross-Validation 
 ## for each value of k, find how many cookie guesses would match its real classification
 ## the accuracy of each value of k will then determine the best value to use for new cookies
+guess_log = {}
 for k in range(1, 10):
     correct = 0
     wrong = 0
@@ -71,7 +90,12 @@ for k in range(1, 10):
 
         nearest_k_cookies = k_nearest(data_distances, k)
         type_guess = majority_type(nearest_k_cookies)
-        # print(f"  Nearest {k} Cookies to {type}, {ratios}:")
-        # for c in nearest_k_cookies: print(f"    {c}")
+        if type_guess == type:  correct += 1
+        else:                   wrong += 1
+
+    guess_log[k] = [correct, wrong, total_guesses]
+
+for row in guess_log:
+    print(f"k:{row} {guess_log[row]}")
 
     
