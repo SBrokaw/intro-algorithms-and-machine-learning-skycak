@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-local script="ch4_4_regression_issues.py"
+local script="ch4_5_regression_gradient_descent.py"
 
 clear
 python $script
