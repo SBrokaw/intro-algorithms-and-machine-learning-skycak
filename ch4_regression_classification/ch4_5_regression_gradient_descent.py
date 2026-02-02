@@ -3,6 +3,7 @@
 # from Sorting to Strategic Agents. 
 # https://justinmath.com/regression-via-gradient-descent/
 from math import log, exp, sin, cos
+from random import random as rand
 
 const_PI = 3.141592654
 const_e = 2.718281828
@@ -373,9 +374,9 @@ def gradient_sigma_problem4( v, data ):
     for (x, y) in data:
         common = 2 * (a * sin(b * x) + c * sin(d * x) - y)
         da += common * sin(b * x)
-        db += common * a * b * cos(b * x)
+        db += common * a * x * cos(b * x)
         dc += common * sin(d * x)
-        dd += common * c * d * cos(d * x)
+        dd += common * c * x * cos(d * x)
 
     return [da, db, dc, dd]
 
@@ -461,9 +462,9 @@ def sigma_problem3( alpha, trials ):
 
 def sigma_problem4( alpha, trials ):
     print(" Problem4 Sigma Notation: y ≈ a∙sin(b∙x) + c∙sin(d∙x) ".center(table_width, '='))
-    output_mask = {0, 1, 2, 3, 50, 100, 500, 1000, 5000, 10000}
+    output_mask = {0, 1, 2, 3, 50, 100, 500, 1000, 5000, 20000}
     data = [(0,0),(1,-1),(2,2),(3,0),(4,0),(5,2),(6,-4),(7,4),(8,1),(9,-3)]
-    x_n = [1, 1, -1, -1]
+    x_n = [10 * rand() - 5, 10 * rand() - 5, 10 * rand() - 5, 10 * rand() - 5]
     print(f"  n    " + f"<a_n, b_n, c_n, d_n>".center(col_width) + f"∇RSS(a_n, b_n, c_n, d_n)".center(col_width) + f"RSS(a_n, b_n, c_n, d_n)".center(col_width))
     print(f''.center(table_width, '‾'))
     for n in range(trials):
@@ -539,7 +540,10 @@ a, b = sigma_problem3( 0.001, 10001)
 print(f"  Final Regression (a, b) = ({a:.6g}, {b:.6g})")
 print(f"  {regression_string_prob3(Matrix([[a],[b]]))}\n")
 pseudoinverse_problem3()
+print()
 
-a, b, c, d = sigma_problem4( 0.001, 10001)
-print(f"  Final Regression (a, b, c, d) = ({a:.6g}, {b:.6g}, {c:.6g}, {d:.6g})")
-print(f"  {regression_string_prob4(Matrix([[a],[b],[c],[d]]))}\n")
+for i in range(15):
+    a, b, c, d = sigma_problem4( 0.001, 20001)
+    print(f"  Final Regression (a, b, c, d) = ({a:.6g}, {b:.6g}, {c:.6g}, {d:.6g})")
+    print(f"  {regression_string_prob4(Matrix([[a],[b],[c],[d]]))}\n")
+    print()
