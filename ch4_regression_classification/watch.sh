@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-local script="ch4_5_regression_gradient_descent.py"
+local script="ch4_6_k_nearest_neighbors.py"
 
 clear
 python $script
