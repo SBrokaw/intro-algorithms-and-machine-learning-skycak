@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-local script="ch4_6_k_nearest_neighbors.py"
+local script="ch4_6_multiple_regression_interaction.py"
 
 clear
 python $script
