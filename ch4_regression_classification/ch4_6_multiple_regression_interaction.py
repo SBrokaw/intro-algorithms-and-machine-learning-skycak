@@ -3,10 +3,9 @@
 # from Sorting to Strategic Agents. 
 # https://justinmath.com/multiple-regression-and-interaction-terms/
 from math import log, exp
+from random import random as rand
 
-const_PI = 3.141592654
-const_e = 2.718281828
-table_width = 90
+table_width = 95
 col_width = table_width // 3
 
 def dot_product( arr1, arr2 ):
@@ -250,24 +249,31 @@ def next_guess( v, gradient, alpha ):
 
 def RSS_sigma_problem1( v, data ):
     rss = 0
-    a, b = v[0], v[1]
-    for (x, y) in data:
-        rss += (5 / (1 + exp(-1 * (a * x + b))) + 0.5 - y) ** 2
+    a1, a2, a3, b = v[0], v[1], v[2], v[3]
+    for [x1, x2, x3, y] in data:
+        z = a1 * x1 + a2 * x2 + a3 * x3 + b
+        v = 1 + exp(-1 * z)
+        u = 1 / v - y
+        rss += u ** 2
 
     return rss
 
 def gradient_sigma_problem1( v, data ):
-    da = 0
-    db = 0
-    a, b = v[0], v[1]
-    for (x, y) in data:
-        common = 2 * (5 / (1 + exp(-1 * (a * x + b))) + 0.5 - y) * (-5 * (1 + exp(-1 * (a * x + b))) ** -2 * -1 * exp(-1 * (a * x + b)))
-        da += common * x
+    da1, da2, da3, db = 0, 0, 0, 0
+    a1, a2, a3, b = v[0], v[1], v[2], v[3]
+    for [x1, x2, x3, y] in data:
+        z = a1 * x1 + a2 * x2 + a3 * x3 + b
+        v = 1 + exp(-1 * z)
+        u = 1 / v - y
+        common = 2 * u * exp(-1 * z) / (v ** 2)
+        da1 += common * x1
+        da2 += common * x2
+        da3 += common * x3
         db += common 
 
-    return [da, db]
+    return [da1, da2, da3, db]
 
-def sigma_problem1( alpha, trials ):
+def sigma_problem1( alpha, trials, initial_guess ):
     print(" Problem3 Sigma Notation: y ≈ 1 / (1 + e^-(a1∙x1 + a2∙x2 + a3∙x3 + b)) ".center(table_width, '='))
     output_mask = {0, 1, 2, 3, 50, 100, 500, 1000, 5000, 10000}
     data = [[0, 0, 0, 0.0],
@@ -280,7 +286,7 @@ def sigma_problem1( alpha, trials ):
             [1, 1, 0, 1.0],
             [1, 0, 1, 0.0],
             [0, 1, 1, 0.1]]
-    x_n = [1, 1, 1, 1]
+    x_n = initial_guess.copy()
     print(f"  n    " + f"<a1_n, a2_n, a3_n, b_n>".center(col_width) + f"∇RSS(a1_n, a2_n, a3_n, b_n)".center(col_width) + f"RSS(a1_n, a2_n, a3_n, b_n)".center(col_width))
     print(f''.center(table_width, '‾'))
     for n in range(trials):
@@ -296,8 +302,10 @@ def sigma_problem1( alpha, trials ):
 
     return x_n
 
-
-a1, a2, a3, b = sigma_problem1( 0.001, 10001)
-print(f"  Final Regression (a1, a2, a3, b) = ({a1:.6g}, {a2:.6g}, {a3:.6g}, {b:.6g})")
-# print(f"  {regression_string_prob1(Matrix([[a],[b]]))}\n")
-print()
+random_guesses = [[4 * rand() - 2 for i in range(4)] for j in range(40)]
+random_guesses.append([0.79, 1.13, 0.75, -1.72])
+for starting_point in random_guesses:
+    a1, a2, a3, b = sigma_problem1( 0.001, 10001, starting_point)
+    print(f"  Final Regression (a1, a2, a3, b) = ({a1:.6g}, {a2:.6g}, {a3:.6g}, {b:.6g})")
+    # print(f"  {regression_string_prob1(Matrix([[a],[b]]))}\n")
+    print()
