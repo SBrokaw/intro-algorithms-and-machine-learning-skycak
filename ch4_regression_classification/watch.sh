@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-local script="ch4_6_multiple_regression_interaction.py"
+local script="ch4_8_naive_bayes.py"
 
 clear
 python $script
