@@ -233,10 +233,6 @@ def coefficient_matrix_polynomial( order, data ):
     # print(f"  coeffs:{coeffs}")
     return Matrix(coeffs)
 
-def coefficient_matrix_prob3( data ):
-    coeffs = [[x, 1] for (x,) in data]
-    return Matrix(coeffs)
-
 
 def regression_string_prob1( p ):
     regression = f"y ≈ 5 / (1 + e^-({p.vals[0]:.2g}x + {p.vals[1]:.2g})) + 0.5"
@@ -258,6 +254,18 @@ def RSS_sigma_problem1( v, data ):
 
     return rss
 
+
+def RSS_sigma_problem2( v, data ):
+    rss = 0
+    [a1, a2, a3, a12, a13, a23, b] = v
+    for [x1, x2, x3, y] in data:
+        z = a1 * x1 + a2 * x2 + a3 * x3 + a12 * x1 * x2 + a13 * x1 * x3 + a23 * x2 * x3 + b
+        v = 1 + exp(-1 * z)
+        u = 1 / v - y
+        rss += u ** 2
+
+    return rss
+
 def gradient_sigma_problem1( v, data ):
     da1, da2, da3, db = 0, 0, 0, 0
     a1, a2, a3, b = v[0], v[1], v[2], v[3]
@@ -273,8 +281,26 @@ def gradient_sigma_problem1( v, data ):
 
     return [da1, da2, da3, db]
 
+
+def gradient_sigma_problem2( v, data ):
+    da1, da2, da3, da12, da13, da23, db = 0, 0, 0, 0, 0, 0, 0
+    [a1, a2, a3, a12, a13, a23, b] = v
+    for [x1, x2, x3, y] in data:
+        z = a1 * x1 + a2 * x2 + a3 * x3 + a12 * x1 * x2 + a13 * x1 * x3 + a23 * x2 * x3 + b
+        v = 1 + exp(-1 * z)
+        u = 1 / v - y
+        common = 2 * u * exp(-1 * z) / (v ** 2)
+        da1 += common * x1
+        da2 += common * x2
+        da3 += common * x3
+        da12 += common * x1 * x2
+        da13 += common * x1 * x3
+        da23 += common * x2 * x3
+        db += common 
+
+    return [da1, da2, da3, da12, da13, da23, db]
+
 def sigma_problem1( alpha, trials, initial_guess ):
-    print(" Problem3 Sigma Notation: y ≈ 1 / (1 + e^-(a1∙x1 + a2∙x2 + a3∙x3 + b)) ".center(table_width, '='))
     output_mask = {0, 1, 2, 3, 50, 100, 500, 1000, 5000, 10000}
     data = [[0, 0, 0, 0.0],
             [1, 0, 0, 0.2],
@@ -287,25 +313,76 @@ def sigma_problem1( alpha, trials, initial_guess ):
             [1, 0, 1, 0.0],
             [0, 1, 1, 0.1]]
     x_n = initial_guess.copy()
-    print(f"  n    " + f"<a1_n, a2_n, a3_n, b_n>".center(col_width) + f"∇RSS(a1_n, a2_n, a3_n, b_n)".center(col_width) + f"RSS(a1_n, a2_n, a3_n, b_n)".center(col_width))
-    print(f''.center(table_width, '‾'))
+    # print(f"  n    " + f"<a1_n, a2_n, a3_n, b_n>".center(col_width) + f"∇RSS(a1_n, a2_n, a3_n, b_n)".center(col_width) + f"RSS(a1_n, a2_n, a3_n, b_n)".center(col_width))
+    # print(f''.center(table_width, '‾'))
     for n in range(trials):
         m = gradient_sigma_problem1( x_n, data )
         p = RSS_sigma_problem1( x_n, data )
-        if n in output_mask: 
-            print(f"  {n}".ljust(7) 
-                  + f"<{x_n[0]:.3g}, {x_n[1]:.3g}, {x_n[2]:.3g}, {x_n[3]:.3g}>".center(col_width) 
-                  + f"<{m[0]:.3f}, {m[1]:.3f}, {m[2]:.3f}, {m[3]:.3f}>".center(col_width)
-                  + f"{p:.3f}".center(col_width))
+        # if n in output_mask: 
+        #     print(f"  {n}".ljust(7) 
+        #           + f"<{x_n[0]:.3g}, {x_n[1]:.3g}, {x_n[2]:.3g}, {x_n[3]:.3g}>".center(col_width) 
+        #           + f"<{m[0]:.3f}, {m[1]:.3f}, {m[2]:.3f}, {m[3]:.3f}>".center(col_width)
+        #           + f"{p:.3f}".center(col_width))
 
         x_n = next_guess( x_n, m, alpha )
 
-    return x_n
+    return x_n + [p]
 
+def sigma_problem2( alpha, trials, initial_guess ):
+    output_mask = {0, 1, 2, 3, 50, 100, 500, 1000, 5000, 10000}
+    data = [[0, 0, 0, 0.0],
+            [1, 0, 0, 0.2],
+            [2, 0, 0, 0.5],
+            [0, 1, 0, 0.4],
+            [0, 2, 0, 0.6],
+            [0, 0, 1, 0.5],
+            [0, 0, 2, 0.8],
+            [1, 1, 0, 1.0],
+            [1, 0, 1, 0.0],
+            [0, 1, 1, 0.1]]
+    x_n = initial_guess.copy()
+    # print(f"  n    " + f"<a1_n, a2_n, a3_n, b_n>".center(col_width) + f"∇RSS(a1_n, a2_n, a3_n, b_n)".center(col_width) + f"RSS(a1_n, a2_n, a3_n, b_n)".center(col_width))
+    # print(f''.center(table_width, '‾'))
+    for n in range(trials):
+        m = gradient_sigma_problem2( x_n, data )
+        p = RSS_sigma_problem2( x_n, data )
+        # if n in output_mask: 
+        #     print(f"  {n}".ljust(7) 
+        #           + f"<{x_n[0]:.3g}, {x_n[1]:.3g}, {x_n[2]:.3g}, {x_n[3]:.3g}>".center(col_width) 
+        #           + f"<{m[0]:.3f}, {m[1]:.3f}, {m[2]:.3f}, {m[3]:.3f}>".center(col_width)
+        #           + f"{p:.3f}".center(col_width))
+
+        x_n = next_guess( x_n, m, alpha )
+
+    return x_n + [p]
+
+
+print(" Problem1 Sigma Notation: y ≈ 1 / (1 + e^-(a1∙x1 + a2∙x2 + a3∙x3 + b)) ".center(table_width, '='))
 random_guesses = [[4 * rand() - 2 for i in range(4)] for j in range(40)]
 random_guesses.append([0.79, 1.13, 0.75, -1.72])
+digits = 4
+rss_final = 999
 for starting_point in random_guesses:
-    a1, a2, a3, b = sigma_problem1( 0.001, 10001, starting_point)
-    print(f"  Final Regression (a1, a2, a3, b) = ({a1:.6g}, {a2:.6g}, {a3:.6g}, {b:.6g})")
-    # print(f"  {regression_string_prob1(Matrix([[a],[b]]))}\n")
-    print()
+    a1, a2, a3, b, rss = sigma_problem1( 0.001, 10001, starting_point)
+    if rss < rss_final:
+        a1_final, a2_final, a3_final, b_final, rss_final = a1, a2, a3, b, rss
+
+print(f"  Final Regression (a1, a2, a3, b)  RSS:{rss_final:.{digits}g}")
+print(f"    ({a1_final:.{digits}g}, {a2_final:.{digits}g}, {a3_final:.{digits}g}, {b_final:.{digits}g})") 
+# print(f"  {regression_string_prob1(Matrix([[a],[b]]))}\n")
+print()
+
+
+print(" Problem2 Sigma Notation: y ≈ 1 / (1 + e^-(a1∙x1 + a2∙x2 + a3∙x3 + a12∙x1∙x2 + a13∙x1∙x3 + a23∙x2∙x3 + b)) ".center(table_width, '='))
+random_guesses = [[4 * rand() - 2 for i in range(7)] for j in range(40)]
+random_guesses.append([1.02, 1.34, 1.91, 3.82, -4.82, -3.34, -2.11])
+rss_final = 999
+for starting_point in random_guesses:
+    a1, a2, a3, a12, a13, a23, b, rss = sigma_problem2( 0.001, 10001, starting_point)
+    if rss < rss_final:
+        a1_final, a2_final, a3_final, a12_final, a13_final, a23_final, b_final, rss_final = a1, a2, a3, a12, a13, a23, b, rss
+
+print(f"  Final Regression (a1, a2, a3, a12, a13, a23, b)  RSS:{rss_final}")
+print(f"    ({a1_final:.{digits}g}, {a2_final:.{digits}g}, {a3_final:.{digits}g}, {a12_final:.{digits}g}, {a13_final:.{digits}g}, {a23_final:.{digits}g}, {b_final:.{digits}g})") 
+# print(f"  {regression_string_prob1(Matrix([[a],[b]]))}\n")
+print()
