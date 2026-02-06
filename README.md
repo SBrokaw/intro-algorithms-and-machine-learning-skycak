@@ -70,3 +70,6 @@ Skycak, J. (2022). Overfitting, Underfitting, Cross-Validation, and the Bias-Var
 Skycak, J. (2022). Regression via Gradient Descent. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/regression-via-gradient-descent/
 
 Skycak, J. (2022). Multiple Regression and Interaction Terms. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/multiple-regression-and-interaction-terms/
+
+Skycak, J. (2022). Naive Bayes. In Introduction to Algorithms and Machine Learning: from Sorting to Strategic Agents. https://justinmath.com/naive-bayes/
+
